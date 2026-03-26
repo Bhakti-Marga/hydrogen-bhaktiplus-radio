@@ -22,9 +22,13 @@ type LayoutProps = {
 const RADIO_NAV_ITEMS = [
   {label: 'Radio', to: '/', type: 'internal' as const},
   {label: 'Podcasts', to: '/#weekly-shows', type: 'anchor' as const},
-  {label: 'Kirtan', to: 'https://kirtan-circle.org', type: 'external' as const},
+  {label: 'Kirtan Circle', to: 'https://kirtan-circle.org', type: 'external' as const},
   {label: 'Live', to: '/#weekly-shows', type: 'anchor' as const},
-  {label: 'Events', to: 'https://events.bhaktimarga.org', type: 'external' as const},
+  {label: 'Events', to: '', type: 'dropdown' as const, children: [
+    {label: 'Just Love Festival — July 2026', url: 'https://events.bhaktimarga.org/collections/just-love-festival'},
+    {label: 'With Paramahamsa Vishwananda', url: 'https://events.bhaktimarga.org/collections/paramahamsa-vishwananda'},
+    {label: 'All Events', url: 'https://events.bhaktimarga.org'},
+  ]},
 ];
 
 export function PageLayout({children, layout}: LayoutProps) {
@@ -43,6 +47,51 @@ export function PageLayout({children, layout}: LayoutProps) {
       </div>
       <RadioFooter />
     </>
+  );
+}
+
+function NavDropdown({item}: {item: typeof RADIO_NAV_ITEMS[number]}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false);
+    };
+    if (isOpen) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [isOpen]);
+
+  const children = 'children' in item ? (item as any).children : [];
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="font-figtree text-14 font-600 text-grey-light hover:text-white transition-colors uppercase tracking-wide flex items-center gap-4"
+      >
+        {item.label}
+        <svg className={`w-10 h-10 transition-transform ${isOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      {isOpen && (
+        <div className="absolute left-0 top-full mt-8 bg-brand border border-brand-light/30 rounded-lg shadow-dropdown overflow-hidden min-w-[260px]" style={{zIndex: 9999}}>
+          {children.map((child: any) => (
+            <a
+              key={child.url}
+              href={child.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block px-16 py-12 text-14 font-figtree text-grey-light hover:text-white hover:bg-brand-light/30 transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              {child.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -78,7 +127,9 @@ function RadioHeader() {
 
           <nav className="flex items-center gap-24">
             {RADIO_NAV_ITEMS.map((item) =>
-              item.type === 'external' ? (
+              item.type === 'dropdown' ? (
+                <NavDropdown key={item.label} item={item} />
+              ) : item.type === 'external' ? (
                 <a
                   key={item.label}
                   href={item.to}
@@ -206,7 +257,28 @@ function RadioHeader() {
           <nav className="absolute top-[var(--header-height)] left-0 right-0 bg-brand border-b border-brand-light/20 shadow-dropdown">
             <div className="flex flex-col py-16">
               {RADIO_NAV_ITEMS.map((item) =>
-                item.type === 'external' ? (
+                item.type === 'dropdown' ? (
+                  <div key={item.label}>
+                    <p className="px-24 py-12 font-figtree text-16 font-600 text-grey-light uppercase tracking-wide">
+                      {item.label}
+                    </p>
+                    {('children' in item ? (item as any).children : []).map((child: any) => (
+                      <a
+                        key={child.url}
+                        href={child.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block px-40 py-10 font-figtree text-14 text-grey-dark hover:text-white hover:bg-brand-light/20 transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {child.label}
+                        <svg className="w-12 h-12 inline ml-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" />
+                        </svg>
+                      </a>
+                    ))}
+                  </div>
+                ) : item.type === 'external' ? (
                   <a
                     key={item.label}
                     href={item.to}

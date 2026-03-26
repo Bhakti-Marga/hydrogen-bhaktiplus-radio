@@ -146,12 +146,12 @@ export const SLOT_TYPE_LABELS: Record<ScheduleSlot['type'], string> = {
 };
 
 export const SLOT_TYPE_COLORS: Record<ScheduleSlot['type'], string> = {
-  kirtan: 'bg-purple/20 text-purple',
-  satsang: 'bg-gold/20 text-gold',
-  prayer: 'bg-gold/20 text-gold-light',
-  'live-show': 'bg-red/20 text-red',
-  music: 'bg-brand-lighter/20 text-grey-light',
-  stories: 'bg-orange/20 text-orange',
+  kirtan: 'bg-purple/30 text-white',
+  satsang: 'bg-gold/30 text-white',
+  prayer: 'bg-gold/25 text-white',
+  'live-show': 'bg-red/30 text-white',
+  music: 'bg-brand-lighter/30 text-white',
+  stories: 'bg-orange/30 text-white',
 };
 
 export interface ContextualCTA {

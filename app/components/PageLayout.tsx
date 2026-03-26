@@ -205,6 +205,12 @@ function RadioHeader() {
             </button>
           </div>
 
+          <Link to="/myradio" className="text-grey-light hover:text-gold transition-colors p-8" aria-label="My Radio" prefetch="intent">
+            <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+            </svg>
+          </Link>
+
           <Link to="/account" className="text-grey-light hover:text-white transition-colors p-8" aria-label="Account">
             <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -318,8 +324,23 @@ function RadioHeader() {
                 )
               )}
 
+              {/* My Radio link */}
+              <div className="border-t border-brand-light/20 mt-8">
+                <Link
+                  to="/myradio"
+                  className="flex items-center gap-12 px-24 py-14 font-figtree text-16 font-600 text-gold hover:bg-brand-light/20 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  prefetch="intent"
+                >
+                  <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                  </svg>
+                  My Radio
+                </Link>
+              </div>
+
               {/* Timezone switcher in mobile menu */}
-              <div className="px-24 py-16 border-t border-brand-light/20 mt-8">
+              <div className="px-24 py-16 border-t border-brand-light/20">
                 <p className="text-12 text-grey-dark mb-8 uppercase tracking-wide">Timezone</p>
                 <TimezoneSwitcher variant="inline" />
               </div>

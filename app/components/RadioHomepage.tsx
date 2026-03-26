@@ -3,6 +3,7 @@ import {Stack} from '~/components/Stack';
 import {Cover} from '~/components/Cover';
 import {Container} from '~/components/Container';
 import {TimezoneSwitcher} from '~/components/TimezoneSwitcher';
+import {SaveButton} from '~/components/SaveButton';
 import {useTimezone} from '~/contexts/TimezoneContext';
 import {
   getCurrentSlot,
@@ -160,12 +161,10 @@ function usePlayerControls() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(80);
-  const [isLiked, setIsLiked] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
 
   const togglePlay = () => setIsPlaying((p) => !p);
   const toggleMute = () => setIsMuted((m) => !m);
-  const toggleLike = () => setIsLiked((l) => !l);
   const toggleVolumeSlider = () => setShowVolume((v) => !v);
 
   const share = () => {
@@ -176,7 +175,7 @@ function usePlayerControls() {
     }
   };
 
-  return {isPlaying, togglePlay, isMuted, toggleMute, volume, setVolume, isLiked, toggleLike, showVolume, toggleVolumeSlider, share};
+  return {isPlaying, togglePlay, isMuted, toggleMute, volume, setVolume, showVolume, toggleVolumeSlider, share};
 }
 
 export function RadioHomepage() {
@@ -364,7 +363,7 @@ export function RadioHomepage() {
                         <span className="text-10 font-600 uppercase px-10 py-4 rounded-full bg-red/15 text-red">Live Shows</span>
                         <span className="text-10 font-600 uppercase px-10 py-4 rounded-full bg-brand-lighter/15 text-grey-light">Music</span>
                       </div>
-                      <div className="flex flex-wrap gap-12 justify-center tablet:justify-start">
+                      <div className="flex flex-wrap gap-12 items-center justify-center tablet:justify-start">
                         <button className="btn btn--gold">
                           Listen Now
                         </button>
@@ -374,6 +373,14 @@ export function RadioHomepage() {
                         >
                           See Schedule
                         </button>
+                        <SaveButton
+                          itemId="station:main"
+                          type="station"
+                          title="Bhakti+ Radio"
+                          description="The main Bhakti Marga radio — 24/7 across 4 time zones"
+                          variant="button"
+                          size="sm"
+                        />
                       </div>
                     </div>
                   </div>
@@ -389,7 +396,15 @@ export function RadioHomepage() {
                     >
                       <div className="flex-1 p-24 tablet:p-32">
                         <Stack gap={2}>
-                          <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
+                          <div className="flex items-start justify-between">
+                            <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
+                            <SaveButton
+                              itemId={`station:${station.id}`}
+                              type="station"
+                              title={station.name}
+                              description={station.description}
+                            />
+                          </div>
                           <h3 className="h2-lg text-white">{station.name}</h3>
                           <p className="body-b3 text-gold-light font-500 -mt-8">
                             {(station as any).subtitle}
@@ -423,7 +438,15 @@ export function RadioHomepage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/95 via-brand-dark/50 to-brand-dark/20" />
                       <div className="relative p-24 tablet:p-32 h-full flex flex-col justify-end">
                         <Stack gap={2}>
-                          <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
+                          <div className="flex items-start justify-between">
+                            <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
+                            <SaveButton
+                              itemId={`station:${station.id}`}
+                              type="station"
+                              title={station.name}
+                              description={station.description}
+                            />
+                          </div>
                           <h3 className="h2-lg text-white">{station.name}</h3>
                           <p className="body-b2 text-grey-light opacity-90">
                             {station.description}
@@ -443,7 +466,15 @@ export function RadioHomepage() {
                     className={`${station.gradient} rounded-xl p-24 tablet:p-32 cursor-pointer transition-shadow duration-300 hover:shadow-card-hover`}
                   >
                     <Stack gap={2}>
-                      <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
+                      <div className="flex items-start justify-between">
+                        <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
+                        <SaveButton
+                          itemId={`station:${station.id}`}
+                          type="station"
+                          title={station.name}
+                          description={station.description}
+                        />
+                      </div>
                       <h3 className="h2-lg text-white">{station.name}</h3>
                       <p className="body-b2 text-grey-light opacity-90">
                         {station.description}
@@ -471,8 +502,16 @@ export function RadioHomepage() {
               <div className="relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:scale-[1.02] group">
                 <img src={showFriday} alt="" className="w-full aspect-[16/10] object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-transparent" />
-                <div className="absolute top-12 left-12">
+                <div className="absolute top-12 left-12 flex items-center gap-8">
                   <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-red/90 text-white">Live</span>
+                </div>
+                <div className="absolute top-12 right-12">
+                  <SaveButton
+                    itemId="show:friday-bhakti-live"
+                    type="show"
+                    title="Friday Bhakti Live Show"
+                    description="Every Friday — 21:00 CET — with Mayatita Das"
+                  />
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-20">
                   <p className="text-10 font-700 uppercase text-gold tracking-wider mb-4">Every Friday — 21:00 CET</p>
@@ -492,7 +531,13 @@ export function RadioHomepage() {
                 <div className="absolute top-12 left-12">
                   <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-purple/90 text-white">Kirtan</span>
                 </div>
-                <div className="absolute top-12 right-12">
+                <div className="absolute top-12 right-12 flex items-center gap-8">
+                  <SaveButton
+                    itemId="show:saturday-kirtan-night"
+                    type="show"
+                    title="Saturday Kirtan Night"
+                    description="Every Saturday — 21:00 CET — Kirtan led by Bhakti Marga artists"
+                  />
                   <img src={iconKirtanCircle} alt="" className="w-32 h-32 rounded-md" />
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-20">
@@ -510,6 +555,14 @@ export function RadioHomepage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-transparent" />
                 <div className="absolute top-12 left-12">
                   <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-gold/90 text-brand">Program</span>
+                </div>
+                <div className="absolute top-12 right-12">
+                  <SaveButton
+                    itemId="show:sunday-program"
+                    type="show"
+                    title="Sunday Program"
+                    description="Every Sunday — 17:30 CET — Satsang, prayers, and collective devotion"
+                  />
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-20">
                   <p className="text-10 font-700 uppercase text-gold tracking-wider mb-4">Every Sunday — 17:30 CET</p>
@@ -695,16 +748,13 @@ export function RadioHomepage() {
               />
             </div>
 
-            {/* Like / Favorite */}
-            <button
-              className={`p-4 transition-colors ${player.isLiked ? 'text-gold' : 'text-grey-dark hover:text-gold'}`}
-              aria-label={player.isLiked ? 'Remove from favorites' : 'Add to favorites'}
-              onClick={player.toggleLike}
-            >
-              <svg className="w-20 h-20" viewBox="0 0 24 24" fill={player.isLiked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
-            </button>
+            {/* Save current track */}
+            <SaveButton
+              itemId={`track:${currentSlot?.title || 'bhakti-radio'}`}
+              type="track"
+              title={currentSlot?.title || 'Bhakti+ Radio'}
+              description={`Bhakti+ Radio — ${timezoneData.label}`}
+            />
 
             {/* Share */}
             <button

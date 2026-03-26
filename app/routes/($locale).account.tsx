@@ -16,6 +16,7 @@ import type {
 } from 'customer-accountapi.generated';
 import {PageHeader, Text} from '~/components/Text';
 import {Button} from '~/components/Button';
+import {Link} from '~/components/Link';
 import {OrderCard} from '~/components/OrderCard';
 import {AccountDetails} from '~/components/AccountDetails';
 import {AccountAddressBook} from '~/components/AccountAddressBook';
@@ -116,6 +117,7 @@ function Account({customer, heading, featuredDataPromise}: AccountType) {
           </button>
         </Form>
       </PageHeader>
+      <AccountSavedItemsLink />
       {orders && <AccountOrderHistory orders={orders} />}
       <AccountDetails customer={customer} />
       <AccountAddressBook addresses={addresses} customer={customer} />
@@ -138,6 +140,34 @@ function Account({customer, heading, featuredDataPromise}: AccountType) {
         </Suspense>
       )}
     </>
+  );
+}
+
+function AccountSavedItemsLink() {
+  return (
+    <div className="mt-6">
+      <div className="grid w-full gap-4 p-4 py-6 md:gap-8 md:p-8 lg:p-12">
+        <Link
+          to={usePrefixPathWithLocale('/myradio')}
+          className="flex items-center justify-between p-4 -m-4 rounded-lg hover:bg-primary/5 transition-colors group"
+        >
+          <div className="flex items-center gap-3">
+            <svg className="w-6 h-6 text-primary/50 group-hover:text-primary transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+            </svg>
+            <div>
+              <h2 className="font-bold text-lead">My Radio</h2>
+              <p className="text-primary/50 text-sm">
+                Your saved stations, shows, and tracks.
+              </p>
+            </div>
+          </div>
+          <svg className="w-5 h-5 text-primary/50 group-hover:text-primary transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </Link>
+      </div>
+    </div>
   );
 }
 

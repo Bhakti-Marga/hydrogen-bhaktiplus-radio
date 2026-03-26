@@ -1,0 +1,18 @@
+/* Hero overlay gradients */
+.hero__overlay {
+  background: linear-gradient(to right, #051237 15%, rgba(5, 18, 55, 0.1) 60%);
+}
+
+.hero__overlay-vertical {
+  background: linear-gradient(to top, #051237 0%, rgba(5, 18, 55, 0.1) 60%);
+}
+
+.hero__background-image {
+  object-position: calc(50% - 8rem) center;
+}
+
+@media (min-width: 768px) {
+  .hero__background-image {
+    object-position: center center;
+  }
+}

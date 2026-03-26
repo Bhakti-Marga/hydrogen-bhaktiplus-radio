@@ -36,6 +36,6 @@ jobs:
         run: npm ci
 
       - name: Build and Publish to Oxygen
-        run: npx shopify hydrogen deploy --force-client-sourcemap --build-command "npm run build"
+        run: npx shopify hydrogen deploy --build-command "npm run build"
         env:
           SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000119139 }}

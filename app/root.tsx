@@ -159,7 +159,7 @@ function Layout({children}: {children?: React.ReactNode}) {
       <body>
         {data ? (
           <TimezoneProvider>
-            <SavedItemsProvider isLoggedInPromise={data.isLoggedIn}>
+            <SavedItemsProvider>
               <Analytics.Provider
                 cart={data.cart}
                 shop={data.shop}

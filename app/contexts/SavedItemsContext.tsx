@@ -31,13 +31,7 @@ const SavedItemsContext = createContext<SavedItemsContextValue>({
   toggleSave: () => {},
 });
 
-export function SavedItemsProvider({
-  children,
-  isLoggedInPromise,
-}: {
-  children: ReactNode;
-  isLoggedInPromise: Promise<boolean>;
-}) {
+export function SavedItemsProvider({children}: {children: ReactNode}) {
   const [savedItems, setSavedItems] = useState<SavedItem[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,26 +39,20 @@ export function SavedItemsProvider({
   const loadFetcher = useFetcher();
 
   useEffect(() => {
-    isLoggedInPromise
-      .then((loggedIn) => {
-        setIsLoggedIn(loggedIn);
-        if (loggedIn) {
-          loadFetcher.load('/api/saved-items');
-        } else {
-          setIsLoading(false);
-        }
-      })
-      .catch(() => setIsLoading(false));
+    loadFetcher.load('/api/saved-items');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (loadFetcher.data) {
       const data = loadFetcher.data as {savedItems: SavedItem[]; isLoggedIn: boolean};
       setSavedItems(data.savedItems || []);
-      setIsLoggedIn(data.isLoggedIn);
+      setIsLoggedIn(data.isLoggedIn ?? false);
       setIsLoading(false);
     }
-  }, [loadFetcher.data]);
+    if (loadFetcher.state === 'idle' && !loadFetcher.data) {
+      setIsLoading(false);
+    }
+  }, [loadFetcher.data, loadFetcher.state]);
 
   useEffect(() => {
     if (fetcher.data) {

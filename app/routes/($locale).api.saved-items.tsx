@@ -14,17 +14,17 @@ import {
 } from '~/graphql/customer-account/SavedItemsQueries';
 
 export async function loader({context}: LoaderFunctionArgs) {
-  const isLoggedIn = await context.customerAccount.isLoggedIn();
-  if (!isLoggedIn) {
-    return json({savedItems: [], isLoggedIn: false});
-  }
-
   try {
+    const isLoggedIn = await context.customerAccount.isLoggedIn();
+    if (!isLoggedIn) {
+      return json({savedItems: [], isLoggedIn: false});
+    }
+
     const {data} = await context.customerAccount.query(SAVED_ITEMS_QUERY);
     const items = parseSavedItems(data?.customer?.metafield?.value);
     return json({savedItems: items, isLoggedIn: true});
   } catch {
-    return json({savedItems: [], isLoggedIn: true});
+    return json({savedItems: [], isLoggedIn: false});
   }
 }
 

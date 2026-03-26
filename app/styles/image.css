@@ -1,0 +1,115 @@
+@layer base {
+  /* Lazy Image */
+  .lazypicture {
+    aspect-ratio: var(--aspect-ratio);
+  }
+
+  .lazypicture-placeholder {
+    aspect-ratio: var(--aspect-ratio);
+  }
+
+  @media screen(tablet) {
+    .lazypicture {
+      aspect-ratio: var(--ar-lzimg-tablet, var(--ar-lzimg-mobile));
+    }
+
+    .lazypicture-placeholder {
+      aspect-ratio: var(--ar-lzimg-tablet, var(--ar-lzimg-mobile));
+    }
+  }
+
+  @media screen(desktop) {
+    .lazypicture {
+      aspect-ratio: var(--aspect-ratio-desktop);
+    }
+
+    .lazypicture-placeholder {
+      aspect-ratio: var(--aspect-ratio-desktop);
+    }
+
+    .lazypicture img {
+      aspect-ratio: var(
+        --ar-lzimg-desktop,
+        var(--ar-lzimg-tablet, var(--ar-lzimg-mobile))
+      );
+    }
+  }
+
+  @media screen(laptop) {
+    .lazypicture-placeholder {
+      aspect-ratio: var(
+        --ar-lzimg-laptop,
+        var(--ar-lzimg-desktop, var(--ar-lzimg-tablet, var(--ar-lzimg-mobile)))
+      );
+    }
+
+    .lazypicture {
+      aspect-ratio: var(
+        --ar-lzimg-laptop,
+        var(--ar-lzimg-desktop, var(--ar-lzimg-tablet, var(--ar-lzimg-mobile)))
+      );
+    }
+  }
+
+  @media screen(widescreen) {
+    .lazypicture-placeholder {
+      aspect-ratio: var(
+        --ar-lzimg-widescreen,
+        var(
+          --ar-lzimg-laptop,
+          var(
+            --ar-lzimg-desktop,
+            var(--ar-lzimg-tablet, var(--ar-lzimg-mobile))
+          )
+        )
+      );
+    }
+
+    .lazypicture {
+      aspect-ratio: var(
+        --ar-lzimg-widescreen,
+        var(
+          --ar-lzimg-laptop,
+          var(
+            --ar-lzimg-desktop,
+            var(--ar-lzimg-tablet, var(--ar-lzimg-mobile))
+          )
+        )
+      );
+    }
+  }
+
+  @media screen(extrawide) {
+    .lazypicture-placeholder {
+      aspect-ratio: var(
+        --ar-lzimg-extrawide,
+        var(
+          --ar-lzimg-widescreen,
+          var(
+            --ar-lzimg-laptop,
+            var(
+              --ar-lzimg-desktop,
+              var(--ar-lzimg-tablet, var(--ar-lzimg-mobile))
+            )
+          )
+        )
+      );
+    }
+
+    .lazypicture img {
+      aspect-ratio: var(
+        --ar-lzimg-extrawide,
+        var(
+          --ar-lzimg-widescreen,
+          var(
+            --ar-lzimg-laptop,
+            var(
+              --ar-lzimg-desktop,
+              var(--ar-lzimg-tablet, var(--ar-lzimg-mobile))
+            )
+          )
+        )
+      );
+    }
+  }
+}

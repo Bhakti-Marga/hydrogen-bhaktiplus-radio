@@ -1,0 +1,106 @@
+@layer components {
+  .icon {
+    @apply inline-block
+    w-full
+    h-auto;
+  }
+
+  .visually-hidden {
+    @apply absolute
+    overflow-hidden
+    !whitespace-nowrap;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+  }
+
+  .btn {
+    @apply block whitespace-nowrap font-figtree leading-24 text-16 font-600 px-32 py-12 rounded-full cursor-pointer bg-white text-brand transition-opacity duration-200;
+  }
+
+  .btn:focus,
+  .btn:focus-visible,
+  .btn:active,
+  .btn:hover {
+    @apply opacity-90;
+  }
+
+  .btn:disabled {
+    @apply opacity-20 cursor-not-allowed;
+  }
+
+  .btn--secondary {
+    @apply bg-white/20 text-white;
+  }
+
+  .btn--secondary:focus,
+  .btn--secondary:focus-visible,
+  .btn--secondary:active,
+  .btn--secondary:hover {
+    @apply bg-white/20;
+  }
+
+  .btn--blue {
+    @apply bg-brand text-white;
+  }
+
+  .btn--blue:focus,
+  .btn--blue:focus-visible,
+  .btn--blue:active,
+  .btn--blue:hover {
+    @apply bg-white text-brand;
+  }
+
+  .btn--red {
+    @apply bg-red text-white;
+  }
+
+  .btn--red:focus,
+  .btn--red:focus-visible,
+  .btn--red:active,
+  .btn--red:hover {
+    @apply bg-red/60;
+  }
+
+  .btn--sm {
+    @apply px-16 py-8;
+  }
+
+  .btn--md {
+    @apply px-12 py-16;
+  }
+
+  .btn--lg {
+    @apply px-24 py-12;
+  }
+
+  .btn--ghost {
+    @apply bg-transparent border border-grey-light text-grey-light;
+  }
+
+  .btn--ghost:focus,
+  .btn--ghost:focus-visible,
+  .btn--ghost:active,
+  .btn--ghost:hover {
+    @apply bg-white/5;
+  }
+
+  .btn--gold {
+    @apply bg-gold text-brand;
+  }
+
+  .btn--gold:focus,
+  .btn--gold:focus-visible,
+  .btn--gold:active,
+  .btn--gold:hover {
+    @apply opacity-90;
+  }
+
+  .btn--rect {
+    @apply rounded-md;
+  }
+
+  .btn--loading {
+    @apply opacity-50 cursor-wait;
+  }
+}

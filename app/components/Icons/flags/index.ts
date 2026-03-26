@@ -1,0 +1,17 @@
+export { IconFlagBR } from "./IconFlagBR";
+export { IconFlagCA } from "./IconFlagCA";
+export { IconFlagCN } from "./IconFlagCN";
+export { IconFlagCZ } from "./IconFlagCZ";
+export { IconFlagDE } from "./IconFlagDE";
+export { IconFlagES } from "./IconFlagES";
+export { IconFlagFR } from "./IconFlagFR";
+export { IconFlagGB } from "./IconFlagGB";
+export { IconFlagGR } from "./IconFlagGR";
+export { IconFlagIN } from "./IconFlagIN";
+export { IconFlagIT } from "./IconFlagIT";
+export { IconFlagJP } from "./IconFlagJP";
+export { IconFlagPL } from "./IconFlagPL";
+export { IconFlagPT } from "./IconFlagPT";
+export { IconFlagRO } from "./IconFlagRO";
+export { IconFlagRU } from "./IconFlagRU";
+export { IconFlagUS } from "./IconFlagUS";

@@ -1,0 +1,1 @@
+export { CompactChaptersList } from "./CompactChaptersList";

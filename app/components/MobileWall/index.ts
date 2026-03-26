@@ -1,0 +1,1 @@
+export { MobileWall } from "./MobileWall";

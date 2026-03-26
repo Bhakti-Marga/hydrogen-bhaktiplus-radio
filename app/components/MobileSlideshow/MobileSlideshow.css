@@ -1,0 +1,123 @@
+/* MobileSlideshow - Instagram-style swipe gallery for mobile */
+
+/* Desktop view - normal grid/flex layout */
+.mobile-slideshow-desktop {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  align-items: stretch;
+}
+
+@media (min-width: 40rem) { /* tablet: 640px */
+  .mobile-slideshow-desktop {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) { /* desktop: 1024px */
+  .mobile-slideshow-desktop {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.mobile-slideshow-desktop-item {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Ensure children fill the grid cell */
+.mobile-slideshow-desktop-item > * {
+  flex: 1;
+  height: 100%;
+}
+
+/* Mobile slideshow container */
+.mobile-slideshow {
+  position: relative;
+  width: 100%;
+}
+
+/* Scrollable container with snap */
+.mobile-slideshow-scroll {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: 12px;
+  /* Symmetric padding for proper slide spacing */
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.mobile-slideshow-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Each slide uses a fixed width for consistent sizing.
+   Width allows partial peek of next slide on mobile viewport. */
+.mobile-slideshow-slide {
+  flex: 0 0 auto;
+  width: 284px;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Ensure children fill the slide */
+.mobile-slideshow-slide > * {
+  height: 100%;
+}
+
+/* Indicators container */
+.mobile-slideshow-indicators {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+/* Dot indicators */
+.mobile-slideshow-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mobile-slideshow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-slideshow-dot:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.mobile-slideshow-dot.active {
+  background: rgb(255, 255, 255);
+  width: 10px;
+  height: 10px;
+}
+
+/* Progress bar alternative for many items */
+.mobile-slideshow-progress-bar {
+  width: 60%;
+  max-width: 200px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.mobile-slideshow-progress-fill {
+  height: 100%;
+  background: white;
+  border-radius: 2px;
+  transition: width 0.2s ease;
+}
+

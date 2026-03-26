@@ -1,0 +1,16 @@
+/* Cover component - vertically centers content with optional top/bottom elements */
+.cover > * {
+  margin-block: 1rem;
+}
+
+.cover > :first-child:not(.cover-center) {
+  margin-block-start: 0;
+}
+
+.cover > :last-child:not(.cover-center) {
+  margin-block-end: 0;
+}
+
+.cover-center {
+  margin-block: auto;
+}

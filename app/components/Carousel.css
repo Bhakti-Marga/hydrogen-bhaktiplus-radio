@@ -1,0 +1,33 @@
+/* Edge gradient indicators using pseudo-elements */
+.carousel-container::before,
+.carousel-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+/* Left gradient */
+.carousel-container::before {
+  left: 0;
+  background: linear-gradient(to right, rgb(5 18 55 / 0.9) 0%, transparent 100%);
+}
+
+.carousel-container.can-scroll-left::before {
+  opacity: 1;
+}
+
+/* Right gradient */
+.carousel-container::after {
+  right: 0;
+  background: linear-gradient(to left, rgb(5 18 55 / 0.9) 0%, transparent 100%);
+}
+
+.carousel-container.can-scroll-right::after {
+  opacity: 1;
+}

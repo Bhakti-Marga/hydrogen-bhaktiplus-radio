@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 432" width="32" height="32">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0c349c"/>
+      <stop offset="100%" stop-color="#041236"/>
+    </linearGradient>
+    <clipPath id="circle-clip">
+      <circle cx="216" cy="216" r="216"/>
+    </clipPath>
+  </defs>
+
+  <!-- Circular clipped content -->
+  <g clip-path="url(#circle-clip)">
+    <!-- Gradient background -->
+    <rect width="432" height="432" fill="url(#bg-gradient)"/>
+
+    <!-- Shadow -->
+    <g transform="translate(288.85, 118.05)">
+      <path d="M143.68 220.682L0 125.723V0H28.7037L143.68 77.1013V220.682Z" fill="#041236"/>
+    </g>
+
+    <!-- B letter -->
+    <g transform="translate(79.77, 118.58)">
+      <path d="M0 186.127H17.2921V5.03047H0V0H80.3294C109.07 0 140.445 13.5319 140.445 44.9724C140.445 73.9478 112.327 86.1216 87.754 88.2847V88.838C123.057 88.838 150.935 106.143 150.935 138.64C150.935 168.47 125.643 190.655 77.6948 190.655H0V186.127ZM55.5648 88.0834H69.5039C84.9758 88.0834 101.741 77.5195 101.741 49.9022C101.741 18.5121 91.1549 5.23168 69.2644 5.23168H55.5648V88.0834ZM55.5648 186.127H67.4441C93.502 186.127 107.441 172.344 107.441 139.294C107.441 110.57 94.2684 92.963 71.324 92.963H55.5648V186.127Z" fill="white"/>
+    </g>
+
+    <!-- + symbol -->
+    <text x="312" y="265" fill="#f4f4f4" font-family="Avenir, Helvetica, Arial, sans-serif" font-size="200" font-weight="900" text-anchor="middle">+</text>
+  </g>
+</svg>

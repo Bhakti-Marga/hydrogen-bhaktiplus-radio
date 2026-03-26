@@ -1,0 +1,11 @@
+/* View transitions removed for cleaner CSS transitions */
+
+.card-wrapper--active:after {
+  content: "";
+  background: url("/app/assets/images/icon-arrow.svg") no-repeat center bottom;
+  @apply w-80 h-12 block absolute -bottom-[7px] left-1/2 -translate-x-1/2;
+}
+
+.card-wrapper--active .card {
+  @apply outline-2 outline-gold-light outline;
+}

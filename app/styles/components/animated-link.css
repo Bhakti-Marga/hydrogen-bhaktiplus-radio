@@ -1,0 +1,33 @@
+.animated-link-chevron-trigger:hover .animated-link__icon {
+  @apply opacity-100;
+}
+
+.animated-link {
+  @apply relative flex items-center transition-all duration-500 ease-in-out;
+  transform: translateX(-4px);
+  will-change: transform;
+  outline: none;
+}
+
+.animated-link:focus {
+  outline: none;
+}
+
+.animated-link:focus-visible {
+  outline: none;
+}
+
+.animated-link-text-trigger:hover {
+  @apply translate-x-0;
+}
+
+.animated-link-text-trigger:hover .animated-link__text {
+  @apply opacity-100 translate-x-0;
+  max-width: 200px;
+}
+
+.animated-link__text {
+  @apply opacity-0 overflow-hidden whitespace-nowrap transition-all duration-500 ease-in-out max-w-0;
+  transform: translateX(-4px);
+  will-change: transform, opacity, max-width;
+}

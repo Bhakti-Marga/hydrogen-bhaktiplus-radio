@@ -1,0 +1,28 @@
+.gradient-purple {
+    background: linear-gradient(122.11deg, #000030 8.59%, #000096 60.19%, #000137 95.73%);
+}
+
+.gradient-gold {
+    background: linear-gradient(129.92deg, #D6BF90 11.23%, #FFEECB 50.34%, #D6BF90 82.1%);
+}
+
+.text-gradient {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.border-gradient {
+    @apply relative border-solid border-[0.5px] border-transparent;
+}
+
+.border-gradient::before {
+    @apply content-[''] absolute -top-[0.5px] -left-[0.5px] rounded-lg p-1 w-[calc(100%+1px)] h-[calc(100%+1px)] -z-10;
+}
+
+.border-gradient--gold::before {
+    background: linear-gradient(129.92deg, #D6BF90 11.23%, #FFEECB 50.34%, #D6BF90 82.1%);
+}
+
+.border-gradient--purple::before {
+    background: linear-gradient(122.11deg, #000030 8.59%, #000096 60.19%, #000137 95.73%);
+}

@@ -1,0 +1,235 @@
+@layer base {
+  *:focus {
+    @apply outline-none;
+  }
+
+  body {
+    @apply bg-brand-dark text-white font-figtree;
+  }
+
+  :root {
+    --header-height: 65px;
+
+    /* Spacing scale in rem units */
+    --spacing-1: 0.5rem;   /* 8px */
+    --spacing-2: 1rem;     /* 16px */
+    --spacing-3: 1.5rem;   /* 24px */
+    --spacing-4: 2rem;     /* 32px */
+    --spacing-5: 3rem;     /* 48px */
+    --spacing-6: 4rem;     /* 64px */
+    --spacing-7: 5rem;     /* 80px */
+    --spacing-8: 6rem;     /* 96px */
+
+    /* Card widths */
+    --card-width-xxs: 158px;
+    --card-width-xs: 226px;
+    --card-width-sm: 256px;
+    --card-width-md: 300px;
+    --card-width-lg: 318px;
+
+    /* Video widths */
+    --video-width-xs: 226px;
+    --video-width-sm: 256px;
+    --video-width-md: 300px;
+    --video-width-lg: 318px;
+
+    /* Colors have to be like this for tailwind opacity to work */
+    --brand: 22 37 76;
+    /* #16254c*/
+    --brand-light: 47 60 95;
+    /* #2f3c5f*/
+    --brand-lighter: 119 126 149;
+    /* #777e95*/
+    --brand-dark: 4 18 54;
+    /* #041236*/
+    --gold: 214 191 144;
+    /* #d6bf90*/
+    --gold-light: 232 219 192;
+    /* #e8dbc0*/
+    --grey: 239 239 239;
+    /* #efefef*/
+    --grey-light: 245 246 247;
+    /* #f5f6f7*/
+    --grey-dark: 226 226 231;
+    /* #e2e2e7 */
+    --grey-grey: 128 128 128;
+    /* #808080 - standard CSS gray */
+    --neutral-blue: 210 217 240;
+    /* #e2e2e7*/
+    --white: 241 244 255;
+    /* #ffffff*/
+    --black: 0 0 0;
+    /* #000000*/
+    --red: 232 14 25;
+    /* #e80e19*/
+    --link: 63 79 255;
+    /* #3f4fff*/
+    --purple: 86 68 253;
+    /* #5644fd*/
+    --purple-dark: 89 39 233;
+    /* #5927E9*/
+    --orange: 214 75 40;
+    /* #d64b28*/
+
+    /* Additional colors found in codebase */
+    --text-muted: 155 155 155;       /* #9B9B9B - footer/muted text */
+    --text-placeholder: 152 160 180; /* #98A0B4 - search placeholder */
+    --overlay-dark: 12 22 47;        /* #0C162F - card shadows/overlays */
+  }
+
+  .swiper:not(.swiper-initialized) {
+    @apply hidden;
+  }
+}
+
+@layer components {
+  .icon {
+    @apply inline-block w-full h-auto;
+  }
+
+  .visually-hidden {
+    @apply absolute overflow-hidden !whitespace-nowrap;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer base {
+  .section-pt-xs {
+    @apply pt-32;
+  }
+
+  .section-pt-sm {
+    @apply pt-48;
+  }
+
+  .section-pt-md {
+    @apply pt-64;
+  }
+
+  .section-pt-lg {
+    @apply pt-80;
+  }
+
+  .section-pt-xl {
+    @apply pt-96;
+  }
+
+  .section-pt-2xl {
+    @apply pt-128;
+  }
+
+  .section-pb-xs {
+    @apply pb-32;
+  }
+
+  .section-pb-sm {
+    @apply pb-48;
+  }
+
+  .section-pb-md {
+    @apply pb-64;
+  }
+
+  .section-pb-lg {
+    @apply pb-80;
+  }
+
+  .section-pb-xl {
+    @apply pb-96;
+  }
+
+  .section-pb-2xl {
+    @apply pb-128;
+  }
+
+  .section-mt-xs {
+    @apply mt-32;
+  }
+
+  .section-mt-sm {
+    @apply mt-48;
+  }
+
+  .section-mt-md {
+    @apply mt-64;
+  }
+
+  .section-mt-lg {
+    @apply mt-80;
+  }
+
+  .section-mt-xl {
+    @apply mt-96;
+  }
+
+  .section-mt-2xl {
+    @apply mt-128;
+  }
+
+  .section-mb-xs {
+    @apply mb-32;
+  }
+
+  .section-mb-sm {
+    @apply mb-48;
+  }
+
+  .section-mb-md {
+    @apply mb-64;
+  }
+
+  .section-mb-lg {
+    @apply mb-80;
+  }
+
+  .section-mb-xl {
+    @apply mb-96;
+  }
+
+  .section-mb-2xl {
+    @apply mb-128;
+  }
+}
+
+@layer utils {
+  .tier-name {
+    opacity: 1;
+  }
+
+  .bhakti-gradient {
+    background: linear-gradient(265.3deg, rgba(22, 37, 76, 0) 40%, #051237 60%),
+      linear-gradient(0deg, #051337 0%, rgba(5, 19, 55, 0.6) 100%);
+  }
+
+  @keyframes crossFade {
+    0% {
+      opacity: 0;
+    }
+    40% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}

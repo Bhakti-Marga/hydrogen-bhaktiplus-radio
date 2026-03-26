@@ -1,0 +1,18 @@
+/* Account Layout */
+.account-container {
+  padding-bottom: 80px; /* Space for mobile bottom nav */
+}
+
+@media (min-width: 1024px) {
+  .account-container {
+    padding-bottom: 60px; /* Reset for desktop */
+  }
+}
+
+/* Invoice Table Mobile Scroll */
+@media (max-width: 767px) {
+  .invoice-table-wrapper {
+    overflow-x: auto;
+  }
+}
+

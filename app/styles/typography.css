@@ -1,0 +1,164 @@
+@layer components {
+  /* === RESPONSIVE HEADINGS (Mobile-First) === */
+  /* See docs/RESPONSIVE_DESIGN.md for breakpoint reference */
+
+  /* H1 Large - Hero titles */
+  .h1-lg {
+    @apply font-avenir-next text-40 font-700 leading-48 tracking-normal uppercase;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  @screen tablet {
+    .h1-lg {
+      @apply text-40 leading-48;
+    }
+  }
+  @screen desktop {
+    .h1-lg {
+      @apply text-48 leading-56;
+    }
+  }
+
+  /* H1 Medium - Section titles */
+  .h1-md {
+    @apply font-avenir-next text-24 font-700 leading-32 tracking-normal;
+  }
+  @screen tablet {
+    .h1-md {
+      @apply text-32 leading-40;
+    }
+  }
+  @screen desktop {
+    .h1-md {
+      @apply text-48 leading-56;
+    }
+  }
+
+  /* H1 Small - Subsection titles */
+  .h1-sm {
+    @apply font-avenir-next text-24 font-600 leading-32 tracking-normal;
+  }
+  @screen tablet {
+    .h1-sm {
+      @apply text-24 leading-32;
+    }
+  }
+  @screen desktop {
+    .h1-sm {
+      @apply text-32 leading-40;
+    }
+  }
+
+  /* H2 Large - Carousel/section headers */
+  .h2-lg {
+    @apply font-avenir-next text-18 font-700 leading-24 tracking-tighter uppercase;
+  }
+  @screen tablet {
+    .h2-lg {
+      @apply text-20 leading-24;
+    }
+  }
+  @screen desktop {
+    .h2-lg {
+      @apply text-24 leading-32;
+    }
+  }
+
+  /* H2 Medium */
+  .h2-md {
+    @apply font-avenir-next text-18 font-600 leading-24 tracking-normal;
+  }
+  @screen tablet {
+    .h2-md {
+      @apply text-20 leading-24;
+    }
+  }
+  @screen desktop {
+    .h2-md {
+      @apply text-24 leading-32;
+    }
+  }
+
+  /* H2 Small */
+  .h2-sm {
+    @apply font-avenir-next text-16 font-600 leading-24 tracking-normal;
+  }
+  @screen tablet {
+    .h2-sm {
+      @apply text-18 leading-24;
+    }
+  }
+  @screen desktop {
+    .h2-sm {
+      @apply text-20 leading-32;
+    }
+  }
+
+  /* H3 Large */
+  .h3-lg {
+    @apply font-figtree text-16 font-600 leading-24 tracking-normal;
+  }
+  @screen tablet {
+    .h3-lg {
+      @apply text-18 leading-32;
+    }
+  }
+
+  /* H3 Small */
+  .h3-sm {
+    @apply font-avenir-next text-12 font-700 leading-24 tracking-normal uppercase;
+  }
+
+  /* === RESPONSIVE BODY TEXT (Mobile-First) === */
+
+    /* Body B0 - Primary body text */
+    .body-b0 {
+      @apply font-figtree text-20 font-400 leading-24 tracking-normal;
+    }
+    @screen tablet {
+      .body-b0 {
+        @apply text-24 leading-32;
+      }
+    }
+
+
+  /* Body B1 - Primary body text */
+  .body-b1 {
+    @apply font-figtree text-16 font-400 leading-24 tracking-normal;
+  }
+  @screen tablet {
+    .body-b1 {
+      @apply text-18 leading-32;
+    }
+  }
+
+  /* Body B2 */
+  .body-b2 {
+    @apply font-figtree text-14 font-400 leading-20 tracking-wide;
+  }
+  @screen tablet {
+    .body-b2 {
+      @apply text-16 leading-24;
+    }
+  }
+
+  /* Body B3 */
+  .body-b3 {
+    @apply font-figtree text-14 font-400 leading-24 tracking-wide;
+  }
+
+  /* Body B4 */
+  .body-b4 {
+    @apply font-figtree text-12 font-400 leading-20 tracking-wide;
+  }
+
+  /* Body B5 */
+  .body-b5 {
+    @apply font-figtree text-12 font-400 leading-20 tracking-wide;
+  }
+
+  /* Button text */
+  .btn-text {
+    @apply font-figtree text-16 font-600 leading-24 tracking-normal;
+  }
+}

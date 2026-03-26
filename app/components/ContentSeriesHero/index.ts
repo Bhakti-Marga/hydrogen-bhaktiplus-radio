@@ -1,0 +1,1 @@
+export { ContentSeriesHero } from "./ContentSeriesHero";

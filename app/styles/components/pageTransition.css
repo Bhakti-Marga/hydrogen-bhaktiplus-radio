@@ -1,0 +1,16 @@
+.page-transition {
+  opacity: 1;
+  transition: opacity 200ms ease-in-out;
+}
+
+.page-transition.transitioning {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition,
+  .page-transition.transitioning {
+    transition: none;
+    opacity: 1;
+  }
+}

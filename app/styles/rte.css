@@ -1,0 +1,23 @@
+.rte h1 {
+  @apply h1-md;
+}
+
+.rte h2 {
+  @apply h2-md;
+}
+
+.rte h3 {
+  @apply h3-sm;
+}
+
+.rte p {
+  @apply py-8;
+}
+
+.rte ul {
+  @apply list-disc list-inside;
+}
+
+.rte ol {
+  @apply list-decimal list-inside;
+}

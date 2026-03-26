@@ -1,0 +1,2 @@
+export { AvailableSoonBanner } from './AvailableSoonBanner';
+

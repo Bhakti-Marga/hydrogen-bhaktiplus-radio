@@ -345,13 +345,13 @@ export function RadioHomepage() {
                 <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/30 via-transparent to-brand-dark/30" />
                 <div className="relative p-24 tablet:p-40 desktop:p-48">
                   <div className="flex flex-col tablet:flex-row items-center gap-24 tablet:gap-40">
-                    <div className="shrink-0 flex flex-col items-start">
-                      <img src={logoImg} alt="Bhakti+" className="w-auto h-36 tablet:h-48 mb-4" />
-                      <span className="font-avenir-next font-700 text-16 tablet:text-20 text-gold tracking-[0.3em] uppercase ml-2">Radio</span>
+                    <div className="hidden tablet:flex shrink-0 flex-col items-start">
+                      <img src={logoImg} alt="Bhakti+" className="w-auto h-48 mb-4" />
+                      <span className="font-avenir-next font-700 text-20 text-gold tracking-[0.3em] uppercase ml-2">Radio</span>
                     </div>
                     <div className="flex-1 text-center tablet:text-left">
                       <p className="h3-sm text-gold mb-8">MAIN STATION</p>
-                      <h3 className="h1-md text-white mb-12">Bhakti+ Radio</h3>
+                      <h3 className="h1-md text-white mb-12 hidden tablet:block">Bhakti+ Radio</h3>
                       <p className="body-b1 text-grey-light opacity-80 max-w-2xl mb-8">
                         The heart of Bhakti Marga, broadcasting 24/7 across 4 time zones. 
                         Satsang, kirtan sessions, prayers, live shows, and devotional music — 
@@ -402,7 +402,7 @@ export function RadioHomepage() {
                           </button>
                         </Stack>
                       </div>
-                      <div className="hidden tablet:block w-[180px] desktop:w-[220px] shrink-0">
+                      <div className="w-[120px] tablet:w-[180px] desktop:w-[220px] shrink-0">
                         <img
                           src={paramahamsaPhoto}
                           alt="Paramahamsa Vishwananda"

@@ -26,6 +26,7 @@ import showFriday from '~/assets/shows/friday-bhakti-live.png';
 import showSaturday from '~/assets/shows/saturday-kirtan-night.jpg';
 import showSunday from '~/assets/shows/sunday-program.png';
 import paramahamsaPhoto from '~/assets/paramahamsa-vishwananda.jpeg';
+import gurujiSingPhoto from '~/assets/guruji-sing1.jpeg';
 import kirtanPhoto from '~/assets/kirtan-session.jpg';
 
 const RADIO_STATIONS = [
@@ -400,15 +401,9 @@ export function RadioHomepage() {
                   return (
                     <div
                       key={station.id}
-                      className="relative rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover flex min-h-[260px] tablet:min-h-[300px]"
+                      className="gradient-brand rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover flex"
                     >
-                      <img
-                        src={paramahamsaPhoto}
-                        alt="Paramahamsa Vishwananda"
-                        className="absolute inset-0 w-full h-full object-cover object-top"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/70 to-brand-dark/30" />
-                      <div className="relative flex-1 p-24 tablet:p-32 flex flex-col justify-end">
+                      <div className="flex-1 p-24 tablet:p-32">
                         <Stack gap={2}>
                           <div className="flex items-start justify-between">
                             <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-gold/20 text-gold">New</span>
@@ -430,6 +425,13 @@ export function RadioHomepage() {
                             Listen
                           </button>
                         </Stack>
+                      </div>
+                      <div className="w-[120px] tablet:w-[180px] desktop:w-[220px] shrink-0">
+                        <img
+                          src={gurujiSingPhoto}
+                          alt="Paramahamsa Vishwananda singing kirtan"
+                          className="w-full h-full object-cover object-top"
+                        />
                       </div>
                     </div>
                   );

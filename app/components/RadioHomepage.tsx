@@ -5,6 +5,7 @@ import {Container} from '~/components/Container';
 import {TimezoneSwitcher} from '~/components/TimezoneSwitcher';
 import {SaveButton} from '~/components/SaveButton';
 import {useTimezone} from '~/contexts/TimezoneContext';
+import {useRadioPlayer} from '~/contexts/RadioPlayerContext';
 import {
   getCurrentSlot,
   getSchedule,
@@ -96,16 +97,20 @@ const FEATURES = [
   },
 ];
 
-function AudioWaveBars({count = 5, className = ''}: {count?: number; className?: string}) {
+function AudioWaveBars({count = 5, className = '', animated}: {count?: number; className?: string; animated?: boolean}) {
+  const {isPlaying} = useRadioPlayer();
+  const active = animated ?? isPlaying;
+
   return (
     <div className={`flex items-end gap-2 ${className}`}>
       {[...Array(count)].map((_, i) => (
         <div
           key={i}
-          className="w-[3px] bg-gold rounded-full animate-[audioWave_1s_ease-in-out_infinite]"
+          className={`w-[3px] bg-gold rounded-full ${active ? 'animate-[audioWave_1s_ease-in-out_infinite]' : ''}`}
           style={{
-            height: '14px',
-            animationDelay: `${i * 0.12}s`,
+            height: active ? '14px' : '8px',
+            animationDelay: active ? `${i * 0.12}s` : undefined,
+            transition: 'height 0.3s ease',
           }}
         />
       ))}
@@ -151,48 +156,35 @@ function ContextualCTAButton({cta}: {cta: ContextualCTA}) {
 }
 
 function PlayButton({size = 'lg', className = ''}: {size?: 'sm' | 'lg'; className?: string}) {
+  const {isPlaying, togglePlay} = useRadioPlayer();
   const dimensions = size === 'sm' ? 'w-36 h-36' : 'w-56 h-56';
-  const iconSize = size === 'sm' ? 'w-14 h-14 ml-1' : 'w-20 h-20 ml-2';
+  const iconSize = size === 'sm' ? 'w-14 h-14' : 'w-20 h-20';
 
   return (
     <button
       className={`${dimensions} rounded-full bg-gold flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-200 ${className}`}
-      aria-label="Play"
+      aria-label={isPlaying ? 'Pause' : 'Play'}
+      onClick={togglePlay}
     >
-      <svg className={`${iconSize} text-brand`} viewBox="0 0 24 24" fill="currentColor">
-        <path d="M8 5v14l11-7z" />
-      </svg>
+      {isPlaying ? (
+        <svg className={`${iconSize} text-brand`} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+        </svg>
+      ) : (
+        <svg className={`${iconSize} text-brand ml-1`} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      )}
     </button>
   );
 }
 
-function usePlayerControls() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(80);
-  const [showVolume, setShowVolume] = useState(false);
-
-  const togglePlay = () => setIsPlaying((p) => !p);
-  const toggleMute = () => setIsMuted((m) => !m);
-  const toggleVolumeSlider = () => setShowVolume((v) => !v);
-
-  const share = () => {
-    if (typeof navigator !== 'undefined' && navigator.share) {
-      navigator.share({title: 'Bhakti+ Radio', text: 'Listen to Bhakti+ Radio — 24/7 devotional streaming', url: window.location.href});
-    } else if (typeof navigator !== 'undefined') {
-      navigator.clipboard.writeText(window.location.href);
-    }
-  };
-
-  return {isPlaying, togglePlay, isMuted, toggleMute, volume, setVolume, showVolume, toggleVolumeSlider, share};
-}
-
 export function RadioHomepage() {
   const {timezone, timezoneData} = useTimezone();
+  const player = useRadioPlayer();
   const [currentSlot, setCurrentSlot] = useState<ScheduleSlot | null>(null);
   const [localTime, setLocalTime] = useState('');
   const schedule = getSchedule(timezone);
-  const player = usePlayerControls();
 
   useLayoutEffect(() => {
     setCurrentSlot(getCurrentSlot(timezone));
@@ -484,11 +476,9 @@ export function RadioHomepage() {
                   return (
                     <div
                       key={station.id}
-                      className="relative rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover min-h-[260px] tablet:min-h-[300px]"
+                      className="gradient-brand rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover flex"
                     >
-                      <img src={kirtanPhoto} alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/95 via-brand-dark/50 to-brand-dark/20" />
-                      <div className="relative p-24 tablet:p-32 h-full flex flex-col justify-end">
+                      <div className="flex-1 p-24 tablet:p-32">
                         <Stack gap={2}>
                           <div className="flex items-start justify-between">
                             <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
@@ -507,6 +497,13 @@ export function RadioHomepage() {
                             Listen
                           </button>
                         </Stack>
+                      </div>
+                      <div className="w-[120px] tablet:w-[180px] desktop:w-[220px] shrink-0">
+                        <img
+                          src={kirtanPhoto}
+                          alt="Kirtan Circle community kirtan"
+                          className="w-full h-full object-cover object-left"
+                        />
                       </div>
                     </div>
                   );
@@ -760,11 +757,9 @@ export function RadioHomepage() {
                 </svg>
               )}
             </button>
-            {player.isPlaying && (
-              <div className="hidden tablet:flex items-center">
-                <AudioWaveBars count={16} />
-              </div>
-            )}
+            <div className="hidden tablet:flex items-center">
+              <AudioWaveBars count={16} />
+            </div>
           </div>
 
           {/* Right: Controls (desktop) */}

@@ -10,6 +10,7 @@ import {
 import type {RootLoader} from '~/root';
 import logoImg from '~/assets/logo.png';
 import {TimezoneSwitcher} from '~/components/TimezoneSwitcher';
+import {useRadioPlayer} from '~/contexts/RadioPlayerContext';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -99,6 +100,7 @@ function RadioHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const {isPlaying, play} = useRadioPlayer();
 
   useEffect(() => {
     if (isSearchOpen && searchRef.current) {
@@ -107,6 +109,7 @@ function RadioHeader() {
   }, [isSearchOpen]);
 
   const handleListenLive = () => {
+    play();
     window.scrollTo({top: 0, behavior: 'smooth'});
   };
 
@@ -171,10 +174,16 @@ function RadioHeader() {
             className="flex items-center gap-8 bg-gold text-brand font-figtree font-700 text-14 px-20 py-8 rounded-full hover:opacity-90 transition-opacity cursor-pointer"
             onClick={handleListenLive}
           >
-            <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-            Listen Live
+            {isPlaying ? (
+              <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+              </svg>
+            ) : (
+              <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
+            {isPlaying ? 'On Air' : 'Listen Live'}
           </button>
 
           <TimezoneSwitcher variant="header" />
@@ -249,10 +258,16 @@ function RadioHeader() {
           className="flex items-center gap-4 bg-gold text-brand font-figtree font-700 text-12 px-12 py-8 rounded-full cursor-pointer"
           onClick={handleListenLive}
         >
-          <svg className="w-14 h-14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-          Live
+          {isPlaying ? (
+            <svg className="w-14 h-14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+            </svg>
+          ) : (
+            <svg className="w-14 h-14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          )}
+          {isPlaying ? 'On Air' : 'Live'}
         </button>
       </header>
 

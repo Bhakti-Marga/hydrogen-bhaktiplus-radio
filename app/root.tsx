@@ -30,6 +30,7 @@ import {GenericError} from '~/components/GenericError';
 import {NotFound} from '~/components/NotFound';
 import {TimezoneProvider} from '~/contexts/TimezoneContext';
 import {SavedItemsProvider} from '~/contexts/SavedItemsContext';
+import {RadioPlayerProvider} from '~/contexts/RadioPlayerContext';
 import favicon from '~/assets/favicon.svg';
 import {seoPayload} from '~/lib/seo.server';
 import styles from '~/styles/app.css?url';
@@ -159,20 +160,22 @@ function Layout({children}: {children?: React.ReactNode}) {
       <body>
         {data ? (
           <TimezoneProvider>
-            <SavedItemsProvider>
-              <Analytics.Provider
-                cart={data.cart}
-                shop={data.shop}
-                consent={data.consent}
-              >
-                <PageLayout
-                  key={`${locale.language}-${locale.country}`}
-                  layout={data.layout}
+            <RadioPlayerProvider>
+              <SavedItemsProvider>
+                <Analytics.Provider
+                  cart={data.cart}
+                  shop={data.shop}
+                  consent={data.consent}
                 >
-                  {children}
-                </PageLayout>
-              </Analytics.Provider>
-            </SavedItemsProvider>
+                  <PageLayout
+                    key={`${locale.language}-${locale.country}`}
+                    layout={data.layout}
+                  >
+                    {children}
+                  </PageLayout>
+                </Analytics.Provider>
+              </SavedItemsProvider>
+            </RadioPlayerProvider>
           </TimezoneProvider>
         ) : (
           children

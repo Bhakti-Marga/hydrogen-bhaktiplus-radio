@@ -497,7 +497,7 @@ export function RadioHomepage() {
             src={timezone === 'india' ? heroIndia : heroOther}
             alt=""
             className={`absolute inset-0 w-full h-full object-cover tablet:object-center ${
-              timezone === 'india' ? 'object-[80%_center]' : 'object-[10%_center]'
+              timezone === 'india' ? 'object-[80%_center]' : 'object-[50%_center]'
             }`}
           />
           <div className="absolute inset-0 bg-brand-dark/45" />

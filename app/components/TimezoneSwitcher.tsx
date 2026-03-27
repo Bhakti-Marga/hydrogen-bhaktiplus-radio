@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef, useCallback} from 'react';
+import {useState, useEffect, useLayoutEffect, useRef, useCallback} from 'react';
 import {useTimezone} from '~/contexts/TimezoneContext';
 import {TIMEZONES, TIMEZONE_IDS, getLocalTime, type TimezoneId} from '~/lib/timezone';
 
@@ -7,8 +7,11 @@ export function TimezoneSwitcher({variant = 'header'}: {variant?: 'header' | 'in
   const [isOpen, setIsOpen] = useState(false);
   const [localTime, setLocalTime] = useState('');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setLocalTime(getLocalTime(timezone));
+  }, [timezone]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setLocalTime(getLocalTime(timezone));
     }, 30000);
@@ -107,7 +110,7 @@ function TimezoneOption({
 }) {
   const [time, setTime] = useState('');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setTime(getLocalTime(tzId));
   }, [tzId]);
 

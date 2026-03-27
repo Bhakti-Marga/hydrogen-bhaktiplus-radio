@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useLayoutEffect} from 'react';
 import {Stack} from '~/components/Stack';
 import {Cover} from '~/components/Cover';
 import {Container} from '~/components/Container';
@@ -194,9 +194,12 @@ export function RadioHomepage() {
   const schedule = getSchedule(timezone);
   const player = usePlayerControls();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setCurrentSlot(getCurrentSlot(timezone));
     setLocalTime(getLocalTime(timezone));
+  }, [timezone]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlot(getCurrentSlot(timezone));
       setLocalTime(getLocalTime(timezone));

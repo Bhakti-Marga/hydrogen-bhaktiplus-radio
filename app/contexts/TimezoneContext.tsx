@@ -1,4 +1,4 @@
-import {createContext, useContext, useState, useEffect, useCallback, type ReactNode} from 'react';
+import {createContext, useContext, useState, useLayoutEffect, useCallback, type ReactNode} from 'react';
 import {type TimezoneId, TIMEZONES, detectTimezone} from '~/lib/timezone';
 
 interface TimezoneContextValue {
@@ -13,9 +13,8 @@ const STORAGE_KEY = 'bhakti-radio-timezone';
 
 export function TimezoneProvider({children}: {children: ReactNode}) {
   const [timezone, setTimezoneState] = useState<TimezoneId>('europe');
-  const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY) as TimezoneId | null;
     if (stored && stored in TIMEZONES) {
       setTimezoneState(stored);
@@ -24,7 +23,6 @@ export function TimezoneProvider({children}: {children: ReactNode}) {
       setTimezoneState(detected);
       localStorage.setItem(STORAGE_KEY, detected);
     }
-    setHydrated(true);
   }, []);
 
   const setTimezone = useCallback((tz: TimezoneId) => {

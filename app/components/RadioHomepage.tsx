@@ -1014,17 +1014,15 @@ export function RadioHomepage() {
                 }
               </p>
               {player.source ? (
-                <div className="mt-2 hidden tablet:flex items-center gap-8">
-                  {player.source.badge && (
-                    <span className={`text-10 font-700 uppercase px-8 py-2 rounded-full ${player.source.badgeColor || 'bg-gold/20 text-gold'}`}>
-                      {player.source.badge}
-                    </span>
-                  )}
+                <div className="mt-2 flex items-center gap-8">
+                  <span className={`text-10 font-700 uppercase px-8 py-2 rounded-full hidden tablet:inline-block ${player.source.badgeColor || 'bg-gold/20 text-gold'}`}>
+                    {player.source.badge}
+                  </span>
                   <button
                     className="text-10 font-600 text-gold hover:text-gold-light transition-colors"
                     onClick={player.backToRadio}
                   >
-                    ← Back to Radio
+                    ← Live Radio
                   </button>
                 </div>
               ) : currentSlot ? (

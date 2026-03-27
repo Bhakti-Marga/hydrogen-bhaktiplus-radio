@@ -4,9 +4,9 @@ import {
   useState,
   useEffect,
   useCallback,
+  useRef,
   type ReactNode,
 } from 'react';
-import {useFetcher} from '@remix-run/react';
 import type {SavedItem, SavedItemType} from '~/lib/saved-items';
 
 interface SavedItemsContextValue {
@@ -35,33 +35,21 @@ export function SavedItemsProvider({children}: {children: ReactNode}) {
   const [savedItems, setSavedItems] = useState<SavedItem[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const fetcher = useFetcher();
-  const loadFetcher = useFetcher();
+  const didLoad = useRef(false);
 
   useEffect(() => {
-    loadFetcher.load('/api/saved-items');
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (didLoad.current) return;
+    didLoad.current = true;
 
-  useEffect(() => {
-    if (loadFetcher.data) {
-      const data = loadFetcher.data as {savedItems: SavedItem[]; isLoggedIn: boolean};
-      setSavedItems(data.savedItems || []);
-      setIsLoggedIn(data.isLoggedIn ?? false);
-      setIsLoading(false);
-    }
-    if (loadFetcher.state === 'idle' && !loadFetcher.data) {
-      setIsLoading(false);
-    }
-  }, [loadFetcher.data, loadFetcher.state]);
-
-  useEffect(() => {
-    if (fetcher.data) {
-      const data = fetcher.data as {savedItems?: SavedItem[]; error?: string};
-      if (data.savedItems) {
-        setSavedItems(data.savedItems);
-      }
-    }
-  }, [fetcher.data]);
+    fetch('/api/saved-items')
+      .then((res) => res.json())
+      .then((data: {savedItems: SavedItem[]; isLoggedIn: boolean}) => {
+        setSavedItems(data.savedItems || []);
+        setIsLoggedIn(data.isLoggedIn ?? false);
+      })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const isSaved = useCallback(
     (itemId: string) => savedItems.some((item) => item.id === itemId),
@@ -83,7 +71,6 @@ export function SavedItemsProvider({children}: {children: ReactNode}) {
 
       const alreadySaved = isSaved(item.id);
 
-      // Optimistic update
       if (alreadySaved) {
         setSavedItems((prev) => prev.filter((s) => s.id !== item.id));
       } else {
@@ -101,12 +88,14 @@ export function SavedItemsProvider({children}: {children: ReactNode}) {
       if (item.description) formData.set('description', item.description);
       if (item.imageUrl) formData.set('imageUrl', item.imageUrl);
 
-      fetcher.submit(formData, {
-        method: 'POST',
-        action: '/api/saved-items',
-      });
+      fetch('/api/saved-items', {method: 'POST', body: formData})
+        .then((res) => res.json())
+        .then((data: {savedItems?: SavedItem[]}) => {
+          if (data.savedItems) setSavedItems(data.savedItems);
+        })
+        .catch(() => {});
     },
-    [isLoggedIn, isSaved, fetcher],
+    [isLoggedIn, isSaved],
   );
 
   return (

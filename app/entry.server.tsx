@@ -17,9 +17,9 @@ export default async function handleRequest(
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
     scriptSrc: [
-      'self',
-      'unsafe-inline',
-      'strict-dynamic',
+      "'self'",
+      "'unsafe-inline'",
+      "'strict-dynamic'",
       'https://cdn.shopify.com',
       'https://shopify.com',
       'https://*.shopify.com',

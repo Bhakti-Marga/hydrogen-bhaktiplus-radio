@@ -100,7 +100,7 @@ function RadioHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
-  const {isPlaying, play} = useRadioPlayer();
+  const {isPlaying, backToRadio} = useRadioPlayer();
 
   useEffect(() => {
     if (isSearchOpen && searchRef.current) {
@@ -109,7 +109,7 @@ function RadioHeader() {
   }, [isSearchOpen]);
 
   const handleListenLive = () => {
-    play();
+    backToRadio();
     window.scrollTo({top: 0, behavior: 'smooth'});
   };
 

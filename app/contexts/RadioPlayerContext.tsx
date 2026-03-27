@@ -12,7 +12,7 @@ export interface PlayerSource {
   subtitle: string;
   image?: string;
   imageUrl?: string;
-  type: 'radio' | 'show';
+  type: 'radio' | 'station' | 'show';
   badge?: string;
   badgeColor?: string;
 }

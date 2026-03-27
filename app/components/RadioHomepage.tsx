@@ -55,7 +55,7 @@ const RADIO_STATIONS = [
   },
   {
     id: 'guruji-kirtan',
-    name: 'Guruji Kirtan',
+    name: 'Kirtan with the Master',
     subtitle: 'Kirtan Sessions sung by Paramahamsa Vishwananda',
     description: 'The most sacred kirtans performed by Paramahamsa Vishwananda Himself — 24/7',
     gradient: 'gradient-brand',
@@ -99,10 +99,50 @@ const FEATURES = [
 
 interface ShowData extends PlayerSource {
   image: string;
-  schedule: string;
   host?: string;
   description: string;
   saveId: string;
+  dayOfWeek: number;
+  hour: number;
+  minute: number;
+}
+
+const SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const SHORT_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function getShowDates(dayOfWeek: number, hour: number, minute: number) {
+  const now = new Date();
+  const cetOffset = 1;
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const cet = new Date(utc + cetOffset * 3600000);
+
+  const currentDay = cet.getDay();
+  let daysUntilNext = (dayOfWeek - currentDay + 7) % 7;
+  if (daysUntilNext === 0) {
+    const showTimeTodayCET = new Date(cet);
+    showTimeTodayCET.setHours(hour, minute, 0, 0);
+    if (cet > showTimeTodayCET) daysUntilNext = 7;
+  }
+
+  const next = new Date(cet);
+  next.setDate(cet.getDate() + daysUntilNext);
+  next.setHours(hour, minute, 0, 0);
+
+  const last = new Date(next);
+  last.setDate(last.getDate() - 7);
+
+  const fmt = (d: Date) => `${SHORT_DAYS[d.getDay()]} ${d.getDate()} ${SHORT_MONTHS[d.getMonth()]}`;
+  const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')} CET`;
+
+  return {
+    nextDate: `${fmt(next)} — ${timeStr}`,
+    lastDate: fmt(last),
+    pastEpisodes: Array.from({length: 4}, (_, i) => {
+      const d = new Date(last);
+      d.setDate(d.getDate() - i * 7);
+      return {date: d, label: `${fmt(d)} ${d.getFullYear()}`};
+    }),
+  };
 }
 
 const WEEKLY_SHOWS: ShowData[] = [
@@ -111,37 +151,43 @@ const WEEKLY_SHOWS: ShowData[] = [
     title: 'Friday Bhakti Live Show',
     subtitle: 'with Mayatita Das',
     host: 'Mayatita Das',
-    schedule: 'Every Friday — 21:00 CET',
     description: 'Laughter, devotion, and spontaneous joy — the unmissable weekly live show that brings Bhakti to life.',
     image: 'friday',
     type: 'show',
     badge: 'Live',
     badgeColor: 'bg-red/90 text-white',
     saveId: 'show:friday-bhakti-live',
+    dayOfWeek: 5,
+    hour: 21,
+    minute: 0,
   },
   {
     id: 'saturday-kirtan-night',
     title: 'Saturday Kirtan Night',
     subtitle: 'Bhakti Marga Artists',
-    schedule: 'Every Saturday — 21:00 CET',
     description: 'A sacred musical evening — devotional kirtan led by Bhakti Marga artists from around the world.',
     image: 'saturday',
     type: 'show',
     badge: 'Kirtan',
     badgeColor: 'bg-purple/90 text-white',
     saveId: 'show:saturday-kirtan-night',
+    dayOfWeek: 6,
+    hour: 21,
+    minute: 0,
   },
   {
     id: 'sunday-program',
     title: 'Sunday Program',
     subtitle: 'Weekly Gathering',
-    schedule: 'Every Sunday — 17:30 CET',
     description: 'The weekly spiritual gathering — satsang, prayers, and collective devotion to start the week in grace.',
     image: 'sunday',
     type: 'show',
     badge: 'Program',
     badgeColor: 'bg-gold/90 text-brand',
     saveId: 'show:sunday-program',
+    dayOfWeek: 0,
+    hour: 17,
+    minute: 30,
   },
 ];
 
@@ -235,8 +281,10 @@ const SHOW_IMAGES: Record<string, string> = {
 
 function ShowCard({show}: {show: ShowData}) {
   const {source, isPlaying, playSource, togglePlay} = useRadioPlayer();
+  const [showEpisodes, setShowEpisodes] = useState(false);
   const isThisPlaying = source?.id === show.id && isPlaying;
   const isThisSelected = source?.id === show.id;
+  const dates = getShowDates(show.dayOfWeek, show.hour, show.minute);
 
   const handleClick = () => {
     if (isThisSelected) {
@@ -246,74 +294,173 @@ function ShowCard({show}: {show: ShowData}) {
     }
   };
 
-  return (
-    <div
-      className="relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:scale-[1.02] group"
-      onClick={handleClick}
-    >
-      <img
-        src={SHOW_IMAGES[show.image]}
-        alt=""
-        className={`w-full aspect-[16/10] object-cover ${show.id === 'saturday-kirtan-night' ? 'object-right' : ''}`}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-transparent" />
-      {show.id === 'saturday-kirtan-night' && (
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/80 via-transparent to-transparent" />
-      )}
+  const handlePlayEpisode = (ep: {label: string}) => {
+    playSource({
+      ...show,
+      id: `${show.id}:${ep.label}`,
+      subtitle: `Episode — ${ep.label}`,
+    });
+  };
 
-      {/* Play overlay on hover */}
-      <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${
-        isThisPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-      }`}>
-        <div className={`w-56 h-56 rounded-full flex items-center justify-center backdrop-blur-sm transition-transform duration-200 group-hover:scale-110 ${
-          isThisPlaying ? 'bg-gold' : 'bg-gold/90'
+  return (
+    <div className="flex flex-col">
+      <div
+        className="relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:scale-[1.02] group"
+        onClick={handleClick}
+      >
+        <img
+          src={SHOW_IMAGES[show.image]}
+          alt=""
+          className={`w-full aspect-[16/10] object-cover ${show.id === 'saturday-kirtan-night' ? 'object-right' : ''}`}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-transparent" />
+        {show.id === 'saturday-kirtan-night' && (
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/80 via-transparent to-transparent" />
+        )}
+
+        {/* Play overlay on hover */}
+        <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${
+          isThisPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
         }`}>
-          {isThisPlaying ? (
-            <svg className="w-24 h-24 text-brand" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-            </svg>
-          ) : (
-            <svg className="w-24 h-24 text-brand ml-1" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 5v14l11-7z" />
-            </svg>
+          <div className={`w-56 h-56 rounded-full flex items-center justify-center backdrop-blur-sm transition-transform duration-200 group-hover:scale-110 ${
+            isThisPlaying ? 'bg-gold' : 'bg-gold/90'
+          }`}>
+            {isThisPlaying ? (
+              <svg className="w-24 h-24 text-brand" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+              </svg>
+            ) : (
+              <svg className="w-24 h-24 text-brand ml-1" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
+          </div>
+        </div>
+
+        {/* Badge */}
+        <div className="absolute top-12 left-12 flex items-center gap-8">
+          <span className={`text-10 font-700 uppercase px-10 py-4 rounded-full ${show.badgeColor}`}>
+            {show.badge}
+          </span>
+          {isThisPlaying && (
+            <span className="text-10 font-700 uppercase px-8 py-4 rounded-full bg-gold/20 text-gold flex items-center gap-4">
+              <span className="w-6 h-6 rounded-full bg-gold animate-pulse" />
+              Playing
+            </span>
           )}
+        </div>
+
+        {/* Save button */}
+        <div className="absolute top-12 right-12 flex items-center gap-8" onClick={(e) => e.stopPropagation()}>
+          <SaveButton
+            itemId={show.saveId}
+            type="show"
+            title={show.title}
+            description={`${dates.nextDate} — ${show.subtitle}`}
+          />
+          {show.id === 'saturday-kirtan-night' && (
+            <img src={iconKirtanCircle} alt="" className="w-32 h-32 rounded-md" />
+          )}
+        </div>
+
+        {/* Info */}
+        <div className="absolute bottom-0 left-0 right-0 p-20">
+          <p className="text-10 font-700 uppercase text-gold tracking-wider mb-4">
+            Next: {dates.nextDate}
+          </p>
+          <h3 className="h2-md text-white mb-4">{show.title}</h3>
+          {show.host && <p className="body-b4 text-gold-light mb-4">with {show.host}</p>}
+          <p className="body-b5 text-grey-dark opacity-60">Last: {dates.lastDate}</p>
         </div>
       </div>
 
-      {/* Badge */}
-      <div className="absolute top-12 left-12 flex items-center gap-8">
-        <span className={`text-10 font-700 uppercase px-10 py-4 rounded-full ${show.badgeColor}`}>
-          {show.badge}
-        </span>
-        {isThisPlaying && (
-          <span className="text-10 font-700 uppercase px-8 py-4 rounded-full bg-gold/20 text-gold flex items-center gap-4">
-            <span className="w-6 h-6 rounded-full bg-gold animate-pulse" />
-            Playing
-          </span>
-        )}
-      </div>
+      {/* Previous episodes toggle */}
+      <button
+        className="mt-8 text-12 font-600 text-grey-dark hover:text-gold transition-colors flex items-center gap-4 self-start"
+        onClick={() => setShowEpisodes((v) => !v)}
+      >
+        <svg className={`w-12 h-12 transition-transform ${showEpisodes ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+        Previous episodes
+      </button>
 
-      {/* Save button */}
-      <div className="absolute top-12 right-12 flex items-center gap-8" onClick={(e) => e.stopPropagation()}>
-        <SaveButton
-          itemId={show.saveId}
-          type="show"
-          title={show.title}
-          description={`${show.schedule} — ${show.subtitle}`}
-        />
-        {show.id === 'saturday-kirtan-night' && (
-          <img src={iconKirtanCircle} alt="" className="w-32 h-32 rounded-md" />
-        )}
-      </div>
-
-      {/* Info */}
-      <div className="absolute bottom-0 left-0 right-0 p-20">
-        <p className="text-10 font-700 uppercase text-gold tracking-wider mb-4">{show.schedule}</p>
-        <h3 className="h2-md text-white mb-4">{show.title}</h3>
-        {show.host && <p className="body-b4 text-gold-light mb-8">with {show.host}</p>}
-        <p className="body-b4 text-grey-light opacity-70">{show.description}</p>
+      {/* Episodes list */}
+      <div className={`overflow-hidden transition-all duration-300 ${showEpisodes ? 'max-h-[300px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+        <div className="flex flex-col gap-2">
+          {dates.pastEpisodes.map((ep) => {
+            const epId = `${show.id}:${ep.label}`;
+            const isEpPlaying = source?.id === epId && isPlaying;
+            return (
+              <button
+                key={ep.label}
+                onClick={() => handlePlayEpisode(ep)}
+                className={`flex items-center gap-12 px-12 py-10 rounded-lg transition-colors text-left ${
+                  isEpPlaying ? 'bg-brand-light/80 ring-1 ring-gold/30' : 'bg-brand-light/20 hover:bg-brand-light/40'
+                }`}
+              >
+                <div className={`w-28 h-28 rounded-full flex items-center justify-center shrink-0 ${
+                  isEpPlaying ? 'bg-gold' : 'bg-brand-light/50'
+                }`}>
+                  {isEpPlaying ? (
+                    <svg className="w-12 h-12 text-brand" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-12 h-12 text-gold ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-12 font-500 truncate ${isEpPlaying ? 'text-white' : 'text-grey-light'}`}>
+                    {show.title}
+                  </p>
+                  <p className="text-10 text-grey-dark opacity-60">{ep.label}</p>
+                </div>
+                {isEpPlaying && <AudioWaveBars count={3} className="shrink-0" />}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
+  );
+}
+
+function StationPlayOverlay({stationId}: {stationId: string}) {
+  const {source, isPlaying} = useRadioPlayer();
+  const isThisPlaying = source?.id === stationId && isPlaying;
+
+  return (
+    <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 z-10 ${
+      isThisPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+    }`}>
+      <div className={`w-56 h-56 rounded-full flex items-center justify-center backdrop-blur-sm transition-transform duration-200 group-hover:scale-110 ${
+        isThisPlaying ? 'bg-gold' : 'bg-gold/80'
+      }`}>
+        {isThisPlaying ? (
+          <svg className="w-24 h-24 text-brand" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+          </svg>
+        ) : (
+          <svg className="w-24 h-24 text-brand ml-1" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StationPlayingBadge({stationId}: {stationId: string}) {
+  const {source, isPlaying} = useRadioPlayer();
+  if (!(source?.id === stationId && isPlaying)) return null;
+  return (
+    <span className="text-10 font-700 uppercase px-8 py-4 rounded-full bg-gold/20 text-gold flex items-center gap-4">
+      <span className="w-6 h-6 rounded-full bg-gold animate-pulse" />
+      Playing
+    </span>
   );
 }
 
@@ -350,7 +497,7 @@ export function RadioHomepage() {
             src={timezone === 'india' ? heroIndia : heroOther}
             alt=""
             className={`absolute inset-0 w-full h-full object-cover tablet:object-center ${
-              timezone === 'india' ? 'object-[80%_center]' : 'object-[20%_center]'
+              timezone === 'india' ? 'object-[80%_center]' : 'object-[10%_center]'
             }`}
           />
           <div className="absolute inset-0 bg-brand-dark/45" />
@@ -532,22 +679,44 @@ export function RadioHomepage() {
               </div>
 
               {RADIO_STATIONS.filter(s => s.id !== 'main').map((station) => {
+                const stationSource: PlayerSource = {
+                  id: station.id,
+                  title: station.name,
+                  subtitle: station.description,
+                  type: 'station',
+                  image: station.id,
+                };
+                const handleStationClick = () => {
+                  if (player.source?.id === station.id) {
+                    player.togglePlay();
+                  } else {
+                    player.playSource(stationSource);
+                  }
+                };
+
                 if (station.id === 'guruji-kirtan') {
                   return (
                     <div
                       key={station.id}
-                      className="gradient-brand rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover flex"
+                      className="relative gradient-brand rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover flex group"
+                      onClick={handleStationClick}
                     >
-                      <div className="flex-1 p-24 tablet:p-32">
+                      <StationPlayOverlay stationId={station.id} />
+                      <div className="flex-1 p-24 tablet:p-32 relative z-20 pointer-events-none">
                         <Stack gap={2}>
                           <div className="flex items-start justify-between">
-                            <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-gold/20 text-gold">New</span>
-                            <SaveButton
-                              itemId={`station:${station.id}`}
-                              type="station"
-                              title={station.name}
-                              description={station.description}
-                            />
+                            <div className="flex items-center gap-8">
+                              <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-gold/20 text-gold">New</span>
+                              <StationPlayingBadge stationId={station.id} />
+                            </div>
+                            <div className="pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+                              <SaveButton
+                                itemId={`station:${station.id}`}
+                                type="station"
+                                title={station.name}
+                                description={station.description}
+                              />
+                            </div>
                           </div>
                           <h3 className="h2-lg text-white">{station.name}</h3>
                           <p className="body-b3 text-gold-light font-500 -mt-8">
@@ -556,9 +725,6 @@ export function RadioHomepage() {
                           <p className="body-b2 text-grey-light opacity-90">
                             {station.description}
                           </p>
-                          <button className="btn btn--sm btn--gold mt-8 w-fit">
-                            Listen
-                          </button>
                         </Stack>
                       </div>
                       <div className="w-[120px] tablet:w-[180px] desktop:w-[220px] shrink-0">
@@ -576,18 +742,25 @@ export function RadioHomepage() {
                   return (
                     <div
                       key={station.id}
-                      className="gradient-purple-dark rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover flex"
+                      className="relative gradient-purple-dark rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover flex group"
+                      onClick={handleStationClick}
                     >
-                      <div className="flex-1 p-24 tablet:p-32">
+                      <StationPlayOverlay stationId={station.id} />
+                      <div className="flex-1 p-24 tablet:p-32 relative z-20 pointer-events-none">
                         <Stack gap={2}>
                           <div className="flex items-start justify-between">
-                            <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
-                            <SaveButton
-                              itemId={`station:${station.id}`}
-                              type="station"
-                              title={station.name}
-                              description={station.description}
-                            />
+                            <div className="flex items-center gap-8">
+                              <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
+                              <StationPlayingBadge stationId={station.id} />
+                            </div>
+                            <div className="pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+                              <SaveButton
+                                itemId={`station:${station.id}`}
+                                type="station"
+                                title={station.name}
+                                description={station.description}
+                              />
+                            </div>
                           </div>
                           <h3 className="h2-lg text-white">{station.name}</h3>
                           <p className="body-b3 text-gold-light font-500 -mt-8">
@@ -596,9 +769,6 @@ export function RadioHomepage() {
                           <p className="body-b2 text-grey-light opacity-90">
                             {station.description}
                           </p>
-                          <button className="btn btn--sm btn--ghost mt-8 w-fit">
-                            Listen
-                          </button>
                         </Stack>
                       </div>
                       <div className="w-[120px] tablet:w-[180px] desktop:w-[220px] shrink-0">
@@ -612,30 +782,79 @@ export function RadioHomepage() {
                   );
                 }
 
-                if (station.id === 'kirtan-circle') {
+                if (station.id === 'mantra') {
                   return (
                     <div
                       key={station.id}
-                      className="gradient-brand rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover flex"
+                      className="relative gradient-purple rounded-xl p-24 tablet:p-32 cursor-pointer transition-shadow duration-300 hover:shadow-card-hover group"
+                      onClick={handleStationClick}
                     >
-                      <div className="flex-1 p-24 tablet:p-32">
+                      <StationPlayOverlay stationId={station.id} />
+                      <div className="relative z-20 pointer-events-none">
                         <Stack gap={2}>
                           <div className="flex items-start justify-between">
-                            <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
-                            <SaveButton
-                              itemId={`station:${station.id}`}
-                              type="station"
-                              title={station.name}
-                              description={station.description}
-                            />
+                            <div className="flex items-center gap-8">
+                              <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
+                              <StationPlayingBadge stationId={station.id} />
+                            </div>
+                            <div className="pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+                              <SaveButton
+                                itemId={`station:${station.id}`}
+                                type="station"
+                                title={station.name}
+                                description={station.description}
+                              />
+                            </div>
                           </div>
                           <h3 className="h2-lg text-white">{station.name}</h3>
                           <p className="body-b2 text-grey-light opacity-90">
                             {station.description}
                           </p>
-                          <button className="btn btn--sm btn--ghost mt-8 w-fit">
-                            Listen
-                          </button>
+                          <div className="mt-8 pt-16 border-t border-white/10">
+                            <p className="text-10 font-700 uppercase text-gold tracking-wider mb-8">
+                              The Power of the Divine Name
+                            </p>
+                            <p className="body-b4 text-grey-light opacity-80 italic leading-relaxed">
+                              In the Bhakti tradition, the Name of God is not separate from God.
+                              To chant is to connect. To repeat is to remember. To remember is to come closer.
+                              This mantra carries within it protection, love, and the presence of the Divine.
+                              By focusing on it, one aligns both inner and outer life with a higher purpose — whether the aim is spiritual growth, clarity, or support in daily life.
+                            </p>
+                          </div>
+                        </Stack>
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (station.id === 'kirtan-circle') {
+                  return (
+                    <div
+                      key={station.id}
+                      className="relative gradient-brand rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover flex group"
+                      onClick={handleStationClick}
+                    >
+                      <StationPlayOverlay stationId={station.id} />
+                      <div className="flex-1 p-24 tablet:p-32 relative z-20 pointer-events-none">
+                        <Stack gap={2}>
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-8">
+                              <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
+                              <StationPlayingBadge stationId={station.id} />
+                            </div>
+                            <div className="pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+                              <SaveButton
+                                itemId={`station:${station.id}`}
+                                type="station"
+                                title={station.name}
+                                description={station.description}
+                              />
+                            </div>
+                          </div>
+                          <h3 className="h2-lg text-white">{station.name}</h3>
+                          <p className="body-b2 text-grey-light opacity-90">
+                            {station.description}
+                          </p>
                         </Stack>
                       </div>
                       <div className="w-[120px] tablet:w-[180px] desktop:w-[220px] shrink-0">
@@ -649,31 +868,7 @@ export function RadioHomepage() {
                   );
                 }
 
-                return (
-                  <div
-                    key={station.id}
-                    className={`${station.gradient} rounded-xl p-24 tablet:p-32 cursor-pointer transition-shadow duration-300 hover:shadow-card-hover`}
-                  >
-                    <Stack gap={2}>
-                      <div className="flex items-start justify-between">
-                        <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
-                        <SaveButton
-                          itemId={`station:${station.id}`}
-                          type="station"
-                          title={station.name}
-                          description={station.description}
-                        />
-                      </div>
-                      <h3 className="h2-lg text-white">{station.name}</h3>
-                      <p className="body-b2 text-grey-light opacity-90">
-                        {station.description}
-                      </p>
-                      <button className="btn btn--sm btn--ghost mt-8 w-fit">
-                        Listen
-                      </button>
-                    </Stack>
-                  </div>
-                );
+                return null;
               })}
             </div>
           </Stack>
@@ -793,6 +988,12 @@ export function RadioHomepage() {
               {player.source?.type === 'show' && player.source.image ? (
                 <img
                   src={SHOW_IMAGES[player.source.image] || ''}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              ) : player.source?.type === 'station' ? (
+                <img
+                  src={RADIO_STATIONS.find(s => s.id === player.source?.image)?.icon || iconMainRadio}
                   alt=""
                   className="w-full h-full object-cover"
                 />

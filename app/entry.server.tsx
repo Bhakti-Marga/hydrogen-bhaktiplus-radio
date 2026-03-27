@@ -30,6 +30,16 @@ export default async function handleRequest(
       'https://www.googletagmanager.com',
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
+    connectSrc: [
+      "'self'",
+      'https://cdn.shopify.com',
+      'https://monorail-edge.shopifysvc.com',
+      'https://*.shopify.com',
+      'https://*.myshopify.com',
+      'https://shop.app',
+      'https://www.google-analytics.com',
+      ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*', 'ws://localhost:*', 'ws://127.0.0.1:*'] : []),
+    ],
   });
 
   const body = await renderToReadableStream(

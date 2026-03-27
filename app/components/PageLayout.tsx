@@ -100,7 +100,8 @@ function RadioHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
-  const {isPlaying, backToRadio} = useRadioPlayer();
+  const {isPlaying, source, backToRadio} = useRadioPlayer();
+  const isMainRadioPlaying = !source && isPlaying;
 
   useEffect(() => {
     if (isSearchOpen && searchRef.current) {
@@ -174,7 +175,7 @@ function RadioHeader() {
             className="flex items-center gap-8 bg-gold text-brand font-figtree font-700 text-14 px-20 py-8 rounded-full hover:opacity-90 transition-opacity cursor-pointer"
             onClick={handleListenLive}
           >
-            {isPlaying ? (
+            {isMainRadioPlaying ? (
               <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
               </svg>
@@ -183,7 +184,7 @@ function RadioHeader() {
                 <path d="M8 5v14l11-7z" />
               </svg>
             )}
-            {isPlaying ? 'On Air' : 'Listen Live'}
+            {isMainRadioPlaying ? 'On Air' : 'Listen Live'}
           </button>
 
           <TimezoneSwitcher variant="header" />
@@ -258,7 +259,7 @@ function RadioHeader() {
           className="flex items-center gap-4 bg-gold text-brand font-figtree font-700 text-12 px-12 py-8 rounded-full cursor-pointer"
           onClick={handleListenLive}
         >
-          {isPlaying ? (
+          {isMainRadioPlaying ? (
             <svg className="w-14 h-14" viewBox="0 0 24 24" fill="currentColor">
               <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
             </svg>
@@ -267,7 +268,7 @@ function RadioHeader() {
               <path d="M8 5v14l11-7z" />
             </svg>
           )}
-          {isPlaying ? 'On Air' : 'Live'}
+          {isMainRadioPlaying ? 'On Air' : 'Live'}
         </button>
       </header>
 

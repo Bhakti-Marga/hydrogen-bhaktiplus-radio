@@ -191,9 +191,10 @@ const WEEKLY_SHOWS: ShowData[] = [
   },
 ];
 
-function AudioWaveBars({count = 5, className = '', animated}: {count?: number; className?: string; animated?: boolean}) {
-  const {isPlaying} = useRadioPlayer();
-  const active = animated ?? isPlaying;
+function AudioWaveBars({count = 5, className = '', animated, forMainRadio}: {count?: number; className?: string; animated?: boolean; forMainRadio?: boolean}) {
+  const {isPlaying, source} = useRadioPlayer();
+  const mainRadioPlaying = !source && isPlaying;
+  const active = animated ?? (forMainRadio ? mainRadioPlaying : isPlaying);
 
   return (
     <div className={`flex items-end gap-2 ${className}`}>
@@ -250,17 +251,26 @@ function ContextualCTAButton({cta}: {cta: ContextualCTA}) {
 }
 
 function PlayButton({size = 'lg', className = ''}: {size?: 'sm' | 'lg'; className?: string}) {
-  const {isPlaying, togglePlay} = useRadioPlayer();
+  const {isPlaying, source, togglePlay, backToRadio} = useRadioPlayer();
+  const isMainRadioPlaying = !source && isPlaying;
   const dimensions = size === 'sm' ? 'w-36 h-36' : 'w-56 h-56';
   const iconSize = size === 'sm' ? 'w-14 h-14' : 'w-20 h-20';
+
+  const handleClick = () => {
+    if (source) {
+      backToRadio();
+    } else {
+      togglePlay();
+    }
+  };
 
   return (
     <button
       className={`${dimensions} rounded-full bg-gold flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-200 ${className}`}
-      aria-label={isPlaying ? 'Pause' : 'Play'}
-      onClick={togglePlay}
+      aria-label={isMainRadioPlaying ? 'Pause' : 'Play'}
+      onClick={handleClick}
     >
-      {isPlaying ? (
+      {isMainRadioPlaying ? (
         <svg className={`${iconSize} text-brand`} viewBox="0 0 24 24" fill="currentColor">
           <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
         </svg>
@@ -539,7 +549,7 @@ export function RadioHomepage() {
                                 <span className={`text-10 font-700 uppercase tracking-wider px-8 py-2 rounded-full ${slotColor}`}>
                                   {slotLabel}
                                 </span>
-                                <AudioWaveBars count={5} />
+                                <AudioWaveBars count={5} forMainRadio />
                                 <span className="text-10 text-grey-dark ml-auto">{timezoneData.flag} {localTime}</span>
                               </div>
                               <p className="h2-sm text-white truncate">
@@ -614,7 +624,7 @@ export function RadioHomepage() {
                     <span className={`body-b4 truncate ${isNow ? 'text-white font-600' : 'text-grey-light'}`}>
                       {slot.title}
                     </span>
-                    {isNow && <AudioWaveBars count={3} className="ml-auto shrink-0" />}
+                    {isNow && <AudioWaveBars count={3} className="ml-auto shrink-0" forMainRadio />}
                   </div>
                 );
               })}

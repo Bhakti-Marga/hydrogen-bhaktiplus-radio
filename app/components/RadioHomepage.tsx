@@ -360,18 +360,11 @@ function ShowCard({show}: {show: ShowData}) {
           )}
         </div>
 
-        {/* Save button */}
-        <div className="absolute top-12 right-12 flex items-center gap-8" onClick={(e) => e.stopPropagation()}>
-          <SaveButton
-            itemId={show.saveId}
-            type="show"
-            title={show.title}
-            description={`${dates.nextDate} — ${show.subtitle}`}
-          />
-          {show.id === 'saturday-kirtan-night' && (
+        {show.id === 'saturday-kirtan-night' && (
+          <div className="absolute top-12 right-12">
             <img src={iconKirtanCircle} alt="" className="w-32 h-32 rounded-md" />
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Info */}
         <div className="absolute bottom-0 left-0 right-0 p-20">
@@ -674,14 +667,6 @@ export function RadioHomepage() {
                         >
                           See Schedule
                         </button>
-                        <SaveButton
-                          itemId="station:main"
-                          type="station"
-                          title="Bhakti+ Radio"
-                          description="The main Bhakti Marga radio — 24/7 across 4 time zones"
-                          variant="button"
-                          size="sm"
-                        />
                       </div>
                     </div>
                   </div>
@@ -719,14 +704,6 @@ export function RadioHomepage() {
                               <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-gold/20 text-gold">New</span>
                               <StationPlayingBadge stationId={station.id} />
                             </div>
-                            <div className="pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-                              <SaveButton
-                                itemId={`station:${station.id}`}
-                                type="station"
-                                title={station.name}
-                                description={station.description}
-                              />
-                            </div>
                           </div>
                           <h3 className="h2-lg text-white">{station.name}</h3>
                           <p className="body-b3 text-gold-light font-500 -mt-8">
@@ -762,14 +739,6 @@ export function RadioHomepage() {
                             <div className="flex items-center gap-8">
                               <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
                               <StationPlayingBadge stationId={station.id} />
-                            </div>
-                            <div className="pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-                              <SaveButton
-                                itemId={`station:${station.id}`}
-                                type="station"
-                                title={station.name}
-                                description={station.description}
-                              />
                             </div>
                           </div>
                           <h3 className="h2-lg text-white">{station.name}</h3>
@@ -807,14 +776,6 @@ export function RadioHomepage() {
                               <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
                               <StationPlayingBadge stationId={station.id} />
                             </div>
-                            <div className="pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-                              <SaveButton
-                                itemId={`station:${station.id}`}
-                                type="station"
-                                title={station.name}
-                                description={station.description}
-                              />
-                            </div>
                           </div>
                           <h3 className="h2-lg text-white">{station.name}</h3>
                           <p className="body-b2 text-grey-light opacity-90">
@@ -851,14 +812,6 @@ export function RadioHomepage() {
                             <div className="flex items-center gap-8">
                               <img src={station.icon} alt={station.name} className="w-56 h-56 rounded-lg object-cover" />
                               <StationPlayingBadge stationId={station.id} />
-                            </div>
-                            <div className="pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-                              <SaveButton
-                                itemId={`station:${station.id}`}
-                                type="station"
-                                title={station.name}
-                                description={station.description}
-                              />
                             </div>
                           </div>
                           <h3 className="h2-lg text-white">{station.name}</h3>

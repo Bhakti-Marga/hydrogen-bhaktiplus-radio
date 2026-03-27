@@ -5,7 +5,7 @@ import {Container} from '~/components/Container';
 import {TimezoneSwitcher} from '~/components/TimezoneSwitcher';
 import {SaveButton} from '~/components/SaveButton';
 import {useTimezone} from '~/contexts/TimezoneContext';
-import {useRadioPlayer} from '~/contexts/RadioPlayerContext';
+import {useRadioPlayer, type PlayerSource} from '~/contexts/RadioPlayerContext';
 import {
   getCurrentSlot,
   getSchedule,
@@ -97,6 +97,54 @@ const FEATURES = [
   },
 ];
 
+interface ShowData extends PlayerSource {
+  image: string;
+  schedule: string;
+  host?: string;
+  description: string;
+  saveId: string;
+}
+
+const WEEKLY_SHOWS: ShowData[] = [
+  {
+    id: 'friday-bhakti-live',
+    title: 'Friday Bhakti Live Show',
+    subtitle: 'with Mayatita Das',
+    host: 'Mayatita Das',
+    schedule: 'Every Friday — 21:00 CET',
+    description: 'Laughter, devotion, and spontaneous joy — the unmissable weekly live show that brings Bhakti to life.',
+    image: 'friday',
+    type: 'show',
+    badge: 'Live',
+    badgeColor: 'bg-red/90 text-white',
+    saveId: 'show:friday-bhakti-live',
+  },
+  {
+    id: 'saturday-kirtan-night',
+    title: 'Saturday Kirtan Night',
+    subtitle: 'Bhakti Marga Artists',
+    schedule: 'Every Saturday — 21:00 CET',
+    description: 'A sacred musical evening — devotional kirtan led by Bhakti Marga artists from around the world.',
+    image: 'saturday',
+    type: 'show',
+    badge: 'Kirtan',
+    badgeColor: 'bg-purple/90 text-white',
+    saveId: 'show:saturday-kirtan-night',
+  },
+  {
+    id: 'sunday-program',
+    title: 'Sunday Program',
+    subtitle: 'Weekly Gathering',
+    schedule: 'Every Sunday — 17:30 CET',
+    description: 'The weekly spiritual gathering — satsang, prayers, and collective devotion to start the week in grace.',
+    image: 'sunday',
+    type: 'show',
+    badge: 'Program',
+    badgeColor: 'bg-gold/90 text-brand',
+    saveId: 'show:sunday-program',
+  },
+];
+
 function AudioWaveBars({count = 5, className = '', animated}: {count?: number; className?: string; animated?: boolean}) {
   const {isPlaying} = useRadioPlayer();
   const active = animated ?? isPlaying;
@@ -179,6 +227,96 @@ function PlayButton({size = 'lg', className = ''}: {size?: 'sm' | 'lg'; classNam
   );
 }
 
+const SHOW_IMAGES: Record<string, string> = {
+  friday: showFriday,
+  saturday: showSaturday,
+  sunday: showSunday,
+};
+
+function ShowCard({show}: {show: ShowData}) {
+  const {source, isPlaying, playSource, togglePlay} = useRadioPlayer();
+  const isThisPlaying = source?.id === show.id && isPlaying;
+  const isThisSelected = source?.id === show.id;
+
+  const handleClick = () => {
+    if (isThisSelected) {
+      togglePlay();
+    } else {
+      playSource(show);
+    }
+  };
+
+  return (
+    <div
+      className="relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:scale-[1.02] group"
+      onClick={handleClick}
+    >
+      <img
+        src={SHOW_IMAGES[show.image]}
+        alt=""
+        className={`w-full aspect-[16/10] object-cover ${show.id === 'saturday-kirtan-night' ? 'object-right' : ''}`}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-transparent" />
+      {show.id === 'saturday-kirtan-night' && (
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/80 via-transparent to-transparent" />
+      )}
+
+      {/* Play overlay on hover */}
+      <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${
+        isThisPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+      }`}>
+        <div className={`w-56 h-56 rounded-full flex items-center justify-center backdrop-blur-sm transition-transform duration-200 group-hover:scale-110 ${
+          isThisPlaying ? 'bg-gold' : 'bg-gold/90'
+        }`}>
+          {isThisPlaying ? (
+            <svg className="w-24 h-24 text-brand" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+            </svg>
+          ) : (
+            <svg className="w-24 h-24 text-brand ml-1" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          )}
+        </div>
+      </div>
+
+      {/* Badge */}
+      <div className="absolute top-12 left-12 flex items-center gap-8">
+        <span className={`text-10 font-700 uppercase px-10 py-4 rounded-full ${show.badgeColor}`}>
+          {show.badge}
+        </span>
+        {isThisPlaying && (
+          <span className="text-10 font-700 uppercase px-8 py-4 rounded-full bg-gold/20 text-gold flex items-center gap-4">
+            <span className="w-6 h-6 rounded-full bg-gold animate-pulse" />
+            Playing
+          </span>
+        )}
+      </div>
+
+      {/* Save button */}
+      <div className="absolute top-12 right-12 flex items-center gap-8" onClick={(e) => e.stopPropagation()}>
+        <SaveButton
+          itemId={show.saveId}
+          type="show"
+          title={show.title}
+          description={`${show.schedule} — ${show.subtitle}`}
+        />
+        {show.id === 'saturday-kirtan-night' && (
+          <img src={iconKirtanCircle} alt="" className="w-32 h-32 rounded-md" />
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="absolute bottom-0 left-0 right-0 p-20">
+        <p className="text-10 font-700 uppercase text-gold tracking-wider mb-4">{show.schedule}</p>
+        <h3 className="h2-md text-white mb-4">{show.title}</h3>
+        {show.host && <p className="body-b4 text-gold-light mb-8">with {show.host}</p>}
+        <p className="body-b4 text-grey-light opacity-70">{show.description}</p>
+      </div>
+    </div>
+  );
+}
+
 export function RadioHomepage() {
   const {timezone, timezoneData} = useTimezone();
   const player = useRadioPlayer();
@@ -211,7 +349,9 @@ export function RadioHomepage() {
           <img
             src={timezone === 'india' ? heroIndia : heroOther}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover"
+            className={`absolute inset-0 w-full h-full object-cover tablet:object-center ${
+              timezone === 'india' ? 'object-[80%_center]' : 'object-[20%_center]'
+            }`}
           />
           <div className="absolute inset-0 bg-brand-dark/45" />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/50 via-brand-dark/20 to-brand-dark" />
@@ -547,80 +687,9 @@ export function RadioHomepage() {
               <h2 className="h1-md text-white">Live Shows &amp; Podcasts</h2>
             </div>
             <div className="grid grid-cols-1 tablet:grid-cols-3 gap-16">
-              {/* Friday Bhakti Live Show */}
-              <div className="relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:scale-[1.02] group">
-                <img src={showFriday} alt="" className="w-full aspect-[16/10] object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-transparent" />
-                <div className="absolute top-12 left-12 flex items-center gap-8">
-                  <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-red/90 text-white">Live</span>
-                </div>
-                <div className="absolute top-12 right-12">
-                  <SaveButton
-                    itemId="show:friday-bhakti-live"
-                    type="show"
-                    title="Friday Bhakti Live Show"
-                    description="Every Friday — 21:00 CET — with Mayatita Das"
-                  />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-20">
-                  <p className="text-10 font-700 uppercase text-gold tracking-wider mb-4">Every Friday — 21:00 CET</p>
-                  <h3 className="h2-md text-white mb-4">Friday Bhakti Live Show</h3>
-                  <p className="body-b4 text-gold-light mb-8">with Mayatita Das</p>
-                  <p className="body-b4 text-grey-light opacity-70">
-                    Laughter, devotion, and spontaneous joy — the unmissable weekly live show that brings Bhakti to life.
-                  </p>
-                </div>
-              </div>
-
-              {/* Saturday Kirtan Night */}
-              <div className="relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:scale-[1.02] group">
-                <img src={showSaturday} alt="" className="w-full aspect-[16/10] object-cover object-right" />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/40 to-brand-dark/30" />
-                <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/80 via-transparent to-transparent" />
-                <div className="absolute top-12 left-12">
-                  <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-purple/90 text-white">Kirtan</span>
-                </div>
-                <div className="absolute top-12 right-12 flex items-center gap-8">
-                  <SaveButton
-                    itemId="show:saturday-kirtan-night"
-                    type="show"
-                    title="Saturday Kirtan Night"
-                    description="Every Saturday — 21:00 CET — Kirtan led by Bhakti Marga artists"
-                  />
-                  <img src={iconKirtanCircle} alt="" className="w-32 h-32 rounded-md" />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-20">
-                  <p className="text-10 font-700 uppercase text-gold tracking-wider mb-4">Every Saturday — 21:00 CET</p>
-                  <h3 className="h2-md text-white mb-4">Saturday Kirtan Night</h3>
-                  <p className="body-b4 text-grey-light opacity-70">
-                    A sacred musical evening — devotional kirtan led by Bhakti Marga artists from around the world.
-                  </p>
-                </div>
-              </div>
-
-              {/* Sunday Program */}
-              <div className="relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:scale-[1.02] group">
-                <img src={showSunday} alt="" className="w-full aspect-[16/10] object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-transparent" />
-                <div className="absolute top-12 left-12">
-                  <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-gold/90 text-brand">Program</span>
-                </div>
-                <div className="absolute top-12 right-12">
-                  <SaveButton
-                    itemId="show:sunday-program"
-                    type="show"
-                    title="Sunday Program"
-                    description="Every Sunday — 17:30 CET — Satsang, prayers, and collective devotion"
-                  />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-20">
-                  <p className="text-10 font-700 uppercase text-gold tracking-wider mb-4">Every Sunday — 17:30 CET</p>
-                  <h3 className="h2-md text-white mb-4">Sunday Program</h3>
-                  <p className="body-b4 text-grey-light opacity-70">
-                    The weekly spiritual gathering — satsang, prayers, and collective devotion to start the week in grace.
-                  </p>
-                </div>
-              </div>
+              {WEEKLY_SHOWS.map((show) => (
+                <ShowCard key={show.id} show={show} />
+              ))}
             </div>
           </Stack>
         </Container>
@@ -721,22 +790,47 @@ export function RadioHomepage() {
           {/* Left: Album art + track info */}
           <div className="flex items-center gap-12 min-w-0 flex-1">
             <div className="w-48 h-48 rounded-md bg-brand-light shrink-0 overflow-hidden flex items-center justify-center">
-              <svg className="w-24 h-24 text-gold opacity-60" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
-              </svg>
+              {player.source?.type === 'show' && player.source.image ? (
+                <img
+                  src={SHOW_IMAGES[player.source.image] || ''}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <svg className="w-24 h-24 text-gold opacity-60" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                </svg>
+              )}
             </div>
             <div className="min-w-0 flex-1">
               <p className="body-b4 font-600 text-white truncate">
-                {currentSlot?.title || 'Bhakti+ Radio'}
+                {player.source ? player.source.title : (currentSlot?.title || 'Bhakti+ Radio')}
               </p>
               <p className="body-b5 text-grey-dark opacity-60 truncate">
-                Bhakti+ Radio — {timezoneData.flag} {timezoneData.label}
+                {player.source
+                  ? player.source.subtitle
+                  : `Bhakti+ Radio — ${timezoneData.flag} ${timezoneData.label}`
+                }
               </p>
-              {currentSlot && (
+              {player.source ? (
+                <div className="mt-2 hidden tablet:flex items-center gap-8">
+                  {player.source.badge && (
+                    <span className={`text-10 font-700 uppercase px-8 py-2 rounded-full ${player.source.badgeColor || 'bg-gold/20 text-gold'}`}>
+                      {player.source.badge}
+                    </span>
+                  )}
+                  <button
+                    className="text-10 font-600 text-gold hover:text-gold-light transition-colors"
+                    onClick={player.backToRadio}
+                  >
+                    ← Back to Radio
+                  </button>
+                </div>
+              ) : currentSlot ? (
                 <div className="mt-2 hidden tablet:block">
                   <ContextualCTAButton cta={SLOT_TYPE_CTAS[currentSlot.type]} />
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
 

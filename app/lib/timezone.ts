@@ -1,11 +1,19 @@
 export const TIMEZONES = {
-  america: {
-    id: 'america',
-    label: 'Americas',
-    shortLabel: 'AM',
+  'america-east': {
+    id: 'america-east',
+    label: 'US East',
+    shortLabel: 'EST',
     utcOffset: -5,
     flag: '🌎',
     iana: 'America/New_York',
+  },
+  'america-west': {
+    id: 'america-west',
+    label: 'US West',
+    shortLabel: 'PST',
+    utcOffset: -8,
+    flag: '🌎',
+    iana: 'America/Los_Angeles',
   },
   europe: {
     id: 'europe',
@@ -38,13 +46,23 @@ export type Timezone = (typeof TIMEZONES)[TimezoneId];
 
 export const TIMEZONE_IDS = Object.keys(TIMEZONES) as TimezoneId[];
 
+const WEST_COAST_ZONES = new Set([
+  'America/Los_Angeles', 'America/Vancouver', 'America/Tijuana',
+  'America/Phoenix', 'America/Denver', 'America/Boise',
+  'America/Edmonton', 'America/Regina', 'America/Anchorage',
+  'America/Juneau', 'America/Sitka', 'America/Yakutat',
+  'US/Pacific', 'US/Mountain', 'US/Alaska', 'US/Arizona',
+  'Canada/Pacific', 'Canada/Mountain',
+  'America/Dawson_Creek', 'America/Whitehorse',
+]);
+
 export function detectTimezone(): TimezoneId {
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (!tz) return 'europe';
 
     if (tz.startsWith('America/') || tz.startsWith('US/') || tz.startsWith('Canada/') || tz.startsWith('Brazil/')) {
-      return 'america';
+      return WEST_COAST_ZONES.has(tz) ? 'america-west' : 'america-east';
     }
     if (tz.startsWith('Asia/Kolkata') || tz.startsWith('Asia/Calcutta') || tz === 'Asia/Colombo') {
       return 'india';
@@ -103,8 +121,11 @@ const SCHEDULE_BASE: ScheduleSlot[] = [
 ];
 
 const TIMEZONE_SPECIFIC: Partial<Record<TimezoneId, ScheduleSlot[]>> = {
-  america: [
+  'america-east': [
     {time: '20:00', title: 'Americas Live Show', type: 'live-show'},
+  ],
+  'america-west': [
+    {time: '18:00', title: 'Americas Live Show', type: 'live-show'},
   ],
   europe: [
     {time: '18:00', title: 'Europe Evening Satsang', type: 'satsang'},

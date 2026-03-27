@@ -52,6 +52,14 @@ const RADIO_STATIONS = [
     icon: iconStoriesRadio,
   },
   {
+    id: 'guruji-kirtan',
+    name: 'Guruji Kirtan',
+    subtitle: 'Kirtan Sessions sung by Paramahamsa Vishwananda',
+    description: 'The most sacred kirtans performed by Paramahamsa Vishwananda Himself — 24/7',
+    gradient: 'gradient-brand',
+    icon: iconMainRadio,
+  },
+  {
     id: 'kirtan-circle',
     name: 'Kirtan Circle Radio',
     description: 'Community Kirtans from around the world — 24/7',
@@ -336,7 +344,7 @@ export function RadioHomepage() {
           <Stack gap={4}>
             <div className="text-center">
               <p className="h3-sm text-gold mb-8">OUR STATIONS</p>
-              <h2 className="h1-md text-white">4 Unique Radio Experiences</h2>
+              <h2 className="h1-md text-white">5 Unique Radio Experiences</h2>
             </div>
             <div className="grid grid-cols-1 tablet:grid-cols-2 gap-16">
               {/* Main Radio — full width hero card */}
@@ -388,6 +396,45 @@ export function RadioHomepage() {
               </div>
 
               {RADIO_STATIONS.filter(s => s.id !== 'main').map((station) => {
+                if (station.id === 'guruji-kirtan') {
+                  return (
+                    <div
+                      key={station.id}
+                      className="relative rounded-xl overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-card-hover flex min-h-[260px] tablet:min-h-[300px]"
+                    >
+                      <img
+                        src={paramahamsaPhoto}
+                        alt="Paramahamsa Vishwananda"
+                        className="absolute inset-0 w-full h-full object-cover object-top"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/70 to-brand-dark/30" />
+                      <div className="relative flex-1 p-24 tablet:p-32 flex flex-col justify-end">
+                        <Stack gap={2}>
+                          <div className="flex items-start justify-between">
+                            <span className="text-10 font-700 uppercase px-10 py-4 rounded-full bg-gold/20 text-gold">New</span>
+                            <SaveButton
+                              itemId={`station:${station.id}`}
+                              type="station"
+                              title={station.name}
+                              description={station.description}
+                            />
+                          </div>
+                          <h3 className="h2-lg text-white">{station.name}</h3>
+                          <p className="body-b3 text-gold-light font-500 -mt-8">
+                            {(station as any).subtitle}
+                          </p>
+                          <p className="body-b2 text-grey-light opacity-90">
+                            {station.description}
+                          </p>
+                          <button className="btn btn--sm btn--gold mt-8 w-fit">
+                            Listen
+                          </button>
+                        </Stack>
+                      </div>
+                    </div>
+                  );
+                }
+
                 if (station.id === 'stories') {
                   return (
                     <div

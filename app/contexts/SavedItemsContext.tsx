@@ -62,9 +62,37 @@ function LoginModal({onClose}: {onClose: () => void}) {
           </div>
 
           <h3 className="h2-md text-white mb-8">Save to My Radio</h3>
-          <p className="body-b3 text-grey-dark opacity-70 mb-24">
-            Sign in to save tracks, shows, and stations to your personal library.
+          <p className="body-b3 text-grey-dark opacity-70 mb-16">
+            Sign in to unlock your personal radio experience.
           </p>
+
+          <div className="text-left mb-24 flex flex-col gap-10">
+            <div className="flex items-start gap-10">
+              <svg className="w-16 h-16 text-gold shrink-0 mt-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              </svg>
+              <p className="body-b4 text-grey-light">Save your favourite tracks, shows, and stations</p>
+            </div>
+            <div className="flex items-start gap-10">
+              <svg className="w-16 h-16 text-gold shrink-0 mt-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+              </svg>
+              <p className="body-b4 text-grey-light">Build your personal My Radio library</p>
+            </div>
+            <div className="flex items-start gap-10">
+              <svg className="w-16 h-16 text-gold shrink-0 mt-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              </svg>
+              <p className="body-b4 text-grey-light">Access your library from any device</p>
+            </div>
+            <div className="flex items-start gap-10">
+              <svg className="w-16 h-16 text-gold shrink-0 mt-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              <p className="body-b4 text-grey-light">Get personalised recommendations</p>
+            </div>
+          </div>
 
           <div className="flex flex-col gap-8">
             <a

@@ -98,16 +98,8 @@ function NavDropdown({item}: {item: typeof RADIO_NAV_ITEMS[number]}) {
 
 function RadioHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const searchRef = useRef<HTMLInputElement>(null);
   const {isPlaying, source, backToRadio} = useRadioPlayer();
   const isMainRadioPlaying = !source && isPlaying;
-
-  useEffect(() => {
-    if (isSearchOpen && searchRef.current) {
-      searchRef.current.focus();
-    }
-  }, [isSearchOpen]);
 
   const handleListenLive = () => {
     backToRadio();
@@ -188,32 +180,6 @@ function RadioHeader() {
           </button>
 
           <TimezoneSwitcher variant="header" />
-
-          {/* Search */}
-          <div className="relative flex items-center">
-            {isSearchOpen && (
-              <input
-                ref={searchRef}
-                type="text"
-                placeholder="Search..."
-                className="w-[180px] bg-brand-light/50 text-white text-14 font-figtree px-12 py-4 rounded-md border border-brand-light/30 focus:border-gold/50 focus:outline-none mr-4"
-                onBlur={() => setTimeout(() => setIsSearchOpen(false), 200)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Escape') setIsSearchOpen(false);
-                }}
-              />
-            )}
-            <button
-              className="text-grey-light hover:text-white transition-colors p-8"
-              aria-label="Search"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-            >
-              <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8" />
-                <path d="M21 21l-4.35-4.35" />
-              </svg>
-            </button>
-          </div>
 
           <Link to="/myradio" className="text-grey-light hover:text-gold transition-colors p-8" aria-label="My Radio" prefetch="intent">
             <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

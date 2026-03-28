@@ -70,6 +70,65 @@ const RADIO_STATIONS = [
   },
 ];
 
+const STATION_PLAYLISTS: Record<string, {title: string; artist: string}[]> = {
+  mantra: [
+    {title: 'Sri Vitthala Giridhari', artist: 'Paramahamsa Vishwananda'},
+    {title: 'Om Namo Narayanaya', artist: 'Bhakti Marga'},
+    {title: 'Govinda Jaya Jaya', artist: 'Bhakti Marga'},
+    {title: 'Hare Krishna Maha Mantra', artist: 'Bhakti Marga'},
+    {title: 'Sri Vitthala Giridhari (Extended)', artist: 'Paramahamsa Vishwananda'},
+    {title: 'Om Namo Bhagavate', artist: 'Bhakti Marga'},
+  ],
+  stories: [
+    {title: 'The Story of Prahlad', artist: 'Paramahamsa Vishwananda'},
+    {title: 'Mirabai — The Saint of Devotion', artist: 'Paramahamsa Vishwananda'},
+    {title: 'The Grace of Hanuman', artist: 'Paramahamsa Vishwananda'},
+    {title: 'Krishna and the Gopis', artist: 'Paramahamsa Vishwananda'},
+    {title: 'The Life of Tukaram', artist: 'Paramahamsa Vishwananda'},
+    {title: 'Narasimha — Divine Protection', artist: 'Paramahamsa Vishwananda'},
+  ],
+  'guruji-kirtan': [
+    {title: 'Radhe Govinda', artist: 'Paramahamsa Vishwananda'},
+    {title: 'Jay Gurudev', artist: 'Paramahamsa Vishwananda'},
+    {title: 'Govinda Hari', artist: 'Paramahamsa Vishwananda'},
+    {title: 'Om Jai Jagdish', artist: 'Paramahamsa Vishwananda'},
+    {title: 'Vitthala Vitthala', artist: 'Paramahamsa Vishwananda'},
+    {title: 'Narayana Hari Om', artist: 'Paramahamsa Vishwananda'},
+  ],
+  'kirtan-circle': [
+    {title: 'Hare Krishna Kirtan', artist: 'Kirtan Circle Community'},
+    {title: 'Shiva Shambo', artist: 'Kirtan Circle Community'},
+    {title: 'Govinda Jaya Jaya', artist: 'Berlin Kirtan Group'},
+    {title: 'Radhe Radhe', artist: 'London Kirtan Circle'},
+    {title: 'Om Namah Shivaya', artist: 'Kirtan Circle Community'},
+    {title: 'Jai Hanuman', artist: 'Paris Kirtan Circle'},
+  ],
+};
+
+function getStationNowPlaying(stationId: string) {
+  const playlist = STATION_PLAYLISTS[stationId];
+  if (!playlist) return null;
+  const hourIndex = new Date().getHours() % playlist.length;
+  return playlist[hourIndex];
+}
+
+function StationNowPlaying({stationId}: {stationId: string}) {
+  const track = getStationNowPlaying(stationId);
+  const {source, isPlaying} = useRadioPlayer();
+  const isThisPlaying = source?.id === stationId && isPlaying;
+  if (!track) return null;
+
+  return (
+    <div className={`flex items-center gap-8 mt-12 pt-10 border-t border-white/10 ${isThisPlaying ? 'opacity-100' : 'opacity-60'}`}>
+      <div className="w-6 h-6 rounded-full bg-gold shrink-0 animate-pulse" />
+      <p className="text-10 text-grey-light truncate">
+        <span className="text-white font-500">{track.title}</span>
+        <span className="text-grey-dark"> — {track.artist}</span>
+      </p>
+    </div>
+  );
+}
+
 const FEATURES = [
   {
     title: '24/7 Streaming',
@@ -625,6 +684,42 @@ export function RadioHomepage() {
           </Stack>
         </Container>
 
+        {/* Recently Played */}
+        <Container>
+          <Stack gap={3}>
+            <div>
+              <p className="h3-sm text-gold mb-4">RECENTLY PLAYED</p>
+              <h2 className="h2-md text-white">On Bhakti+ Radio</h2>
+            </div>
+            <div className="grid grid-cols-2 tablet:grid-cols-3 desktop:grid-cols-6 gap-8">
+              {schedule.slice(0, 6).reverse().map((slot, i) => {
+                const isNow = i === 0;
+                return (
+                  <div
+                    key={`recent-${slot.time}-${i}`}
+                    className={`rounded-lg p-12 transition-colors ${
+                      isNow ? 'bg-brand-light/60 ring-1 ring-gold/20' : 'bg-brand-light/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-6 mb-6">
+                      {isNow && <span className="w-6 h-6 rounded-full bg-gold animate-pulse shrink-0" />}
+                      <span className="text-10 text-grey-dark font-figtree">
+                        {isNow ? 'Now' : slot.time}
+                      </span>
+                      <span className={`text-8 font-700 uppercase px-6 py-1 rounded-full ml-auto ${SLOT_TYPE_COLORS[slot.type]}`}>
+                        {SLOT_TYPE_LABELS[slot.type]}
+                      </span>
+                    </div>
+                    <p className={`text-12 font-500 truncate ${isNow ? 'text-white' : 'text-grey-light'}`}>
+                      {slot.title}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </Stack>
+        </Container>
+
         {/* Radio Stations */}
         <Container id="radio-stations" className="scroll-mt-80">
           <Stack gap={4}>
@@ -712,6 +807,7 @@ export function RadioHomepage() {
                           <p className="body-b2 text-grey-light opacity-90">
                             {station.description}
                           </p>
+                          <StationNowPlaying stationId={station.id} />
                         </Stack>
                       </div>
                       <div className="w-[120px] tablet:w-[180px] desktop:w-[220px] shrink-0">
@@ -748,6 +844,7 @@ export function RadioHomepage() {
                           <p className="body-b2 text-grey-light opacity-90">
                             {station.description}
                           </p>
+                          <StationNowPlaying stationId={station.id} />
                         </Stack>
                       </div>
                       <div className="w-[120px] tablet:w-[180px] desktop:w-[220px] shrink-0">
@@ -792,6 +889,7 @@ export function RadioHomepage() {
                               By focusing on it, one aligns both inner and outer life with a higher purpose — whether the aim is spiritual growth, clarity, or support in daily life.
                             </p>
                           </div>
+                          <StationNowPlaying stationId={station.id} />
                         </Stack>
                       </div>
                     </div>
@@ -818,6 +916,7 @@ export function RadioHomepage() {
                           <p className="body-b2 text-grey-light opacity-90">
                             {station.description}
                           </p>
+                          <StationNowPlaying stationId={station.id} />
                         </Stack>
                       </div>
                       <div className="w-[120px] tablet:w-[180px] desktop:w-[220px] shrink-0">

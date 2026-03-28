@@ -658,7 +658,7 @@ export function RadioHomepage() {
                         <span className="text-10 font-600 uppercase px-10 py-4 rounded-full bg-brand-lighter/15 text-grey-light">Music</span>
                       </div>
                       <div className="flex flex-wrap gap-12 items-center justify-center tablet:justify-start">
-                        <button className="btn btn--gold">
+                        <button className="btn btn--gold" onClick={player.backToRadio}>
                           Listen Now
                         </button>
                         <button

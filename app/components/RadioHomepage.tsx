@@ -526,6 +526,218 @@ function StationPlayingBadge({stationId}: {stationId: string}) {
   );
 }
 
+function BottomPlayerBar({player, currentSlot, timezoneData, schedule}: {
+  player: ReturnType<typeof useRadioPlayer>;
+  currentSlot: ScheduleSlot | null;
+  timezoneData: {flag: string; label: string};
+  schedule: ScheduleSlot[];
+}) {
+  const [showHistory, setShowHistory] = useState(false);
+
+  const recentSlots = schedule
+    .filter((slot) => slot.time <= (currentSlot?.time || '24:00'))
+    .reverse()
+    .slice(0, 8);
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50">
+      {/* Accordion: Recently Played */}
+      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+        showHistory ? 'max-h-[320px]' : 'max-h-0'
+      }`}>
+        <div className="bg-brand/98 backdrop-blur-md border-t border-brand-light/20 px-12 tablet:px-24 pt-12 pb-4">
+          <div className="max-w-[1536px] mx-auto">
+            <p className="text-10 font-700 uppercase text-gold tracking-wider mb-8">Recently Played</p>
+            <div className="flex flex-col gap-2">
+              {recentSlots.map((slot, i) => {
+                const isNow = i === 0;
+                return (
+                  <div
+                    key={`history-${slot.time}-${i}`}
+                    className={`flex items-center gap-10 px-10 py-6 rounded-md transition-colors ${
+                      isNow ? 'bg-brand-light/50' : 'hover:bg-brand-light/20'
+                    }`}
+                  >
+                    {isNow ? (
+                      <span className="w-6 h-6 rounded-full bg-gold animate-pulse shrink-0" />
+                    ) : (
+                      <span className="w-6 h-6 shrink-0" />
+                    )}
+                    <span className="text-10 text-grey-dark font-figtree w-32 shrink-0">
+                      {isNow ? 'Now' : slot.time}
+                    </span>
+                    <span className={`text-8 font-700 uppercase px-6 py-1 rounded-full shrink-0 ${SLOT_TYPE_COLORS[slot.type]}`}>
+                      {SLOT_TYPE_LABELS[slot.type]}
+                    </span>
+                    <span className={`text-12 font-500 truncate ${isNow ? 'text-white' : 'text-grey-light'}`}>
+                      {slot.title}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Player Bar */}
+      <div className="bg-brand/95 backdrop-blur-md border-t border-brand-light/30">
+        <div className="flex items-center justify-between px-12 tablet:px-24 py-8 max-w-[1536px] mx-auto gap-12">
+          {/* Left: Album art + track info */}
+          <div className="flex items-center gap-12 min-w-0 flex-1">
+            <div className="w-48 h-48 rounded-md bg-brand-light shrink-0 overflow-hidden flex items-center justify-center">
+              {player.source?.type === 'show' && player.source.image ? (
+                <img
+                  src={SHOW_IMAGES[player.source.image] || ''}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              ) : player.source?.type === 'station' ? (
+                <img
+                  src={RADIO_STATIONS.find(s => s.id === player.source?.image)?.icon || iconMainRadio}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <svg className="w-24 h-24 text-gold opacity-60" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                </svg>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="body-b4 font-600 text-white truncate">
+                {player.source ? player.source.title : (currentSlot?.title || 'Bhakti+ Radio')}
+              </p>
+              <p className="body-b5 text-grey-dark opacity-60 truncate">
+                {player.source
+                  ? player.source.subtitle
+                  : `Bhakti+ Radio — ${timezoneData.flag} ${timezoneData.label}`
+                }
+              </p>
+              {player.source ? (
+                <div className="mt-2 flex items-center gap-8">
+                  <span className={`text-10 font-700 uppercase px-8 py-2 rounded-full hidden tablet:inline-block ${player.source.badgeColor || 'bg-gold/20 text-gold'}`}>
+                    {player.source.badge}
+                  </span>
+                  <button
+                    className="text-10 font-600 text-gold hover:text-gold-light transition-colors"
+                    onClick={player.backToRadio}
+                  >
+                    ← Live Radio
+                  </button>
+                </div>
+              ) : currentSlot ? (
+                <div className="mt-2 hidden tablet:block">
+                  <ContextualCTAButton cta={SLOT_TYPE_CTAS[currentSlot.type]} />
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Center: Play/Pause button + wave */}
+          <div className="flex items-center gap-16 shrink-0">
+            <button
+              className="w-36 h-36 rounded-full bg-gold flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-200"
+              aria-label={player.isPlaying ? 'Pause' : 'Play'}
+              onClick={player.togglePlay}
+            >
+              {player.isPlaying ? (
+                <svg className="w-14 h-14 text-brand" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                </svg>
+              ) : (
+                <svg className="w-14 h-14 text-brand ml-1" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              )}
+            </button>
+            <div className="hidden tablet:flex items-center">
+              <AudioWaveBars count={16} />
+            </div>
+          </div>
+
+          {/* Right: Controls */}
+          <div className="flex items-center gap-4 shrink-0">
+            {/* Volume (desktop) */}
+            <div className="hidden tablet:flex relative items-center">
+              <button
+                className={`p-4 transition-colors ${player.isMuted ? 'text-red' : 'text-grey-dark hover:text-white'}`}
+                aria-label={player.isMuted ? 'Unmute' : 'Mute'}
+                onClick={player.toggleMute}
+              >
+                {player.isMuted ? (
+                  <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <line x1="23" y1="9" x2="17" y2="15" />
+                    <line x1="17" y1="9" x2="23" y2="15" />
+                  </svg>
+                ) : (
+                  <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                  </svg>
+                )}
+              </button>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={player.isMuted ? 0 : player.volume}
+                onChange={(e) => player.setVolume(Number(e.target.value))}
+                className="w-[80px] h-4 appearance-none bg-brand-light rounded-full cursor-pointer accent-gold"
+                aria-label="Volume"
+              />
+            </div>
+
+            {/* Save (desktop) */}
+            <div className="hidden tablet:block">
+              <SaveButton
+                itemId={`track:${currentSlot?.title || 'bhakti-radio'}`}
+                type="track"
+                title={currentSlot?.title || 'Bhakti+ Radio'}
+                description={`Bhakti+ Radio — ${timezoneData.label}`}
+              />
+            </div>
+
+            {/* Share (desktop) */}
+            <button
+              className="hidden tablet:block text-grey-dark hover:text-white transition-colors p-4"
+              aria-label="Share"
+              onClick={player.share}
+            >
+              <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98" />
+              </svg>
+            </button>
+
+            {/* Recently Played toggle (burger) */}
+            <button
+              className={`p-4 transition-colors ${showHistory ? 'text-gold' : 'text-grey-dark hover:text-white'}`}
+              aria-label="Recently Played"
+              onClick={() => setShowHistory((v) => !v)}
+            >
+              <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              </svg>
+            </button>
+
+            {/* Stations (desktop) */}
+            <button
+              className="hidden tablet:inline-flex btn btn--sm btn--ghost text-12"
+              onClick={() => document.getElementById('radio-stations')?.scrollIntoView({behavior: 'smooth'})}
+            >
+              Stations
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function RadioHomepage() {
   const {timezone, timezoneData} = useTimezone();
   const player = useRadioPlayer();
@@ -677,42 +889,6 @@ export function RadioHomepage() {
                       {slot.title}
                     </span>
                     {isNow && <AudioWaveBars count={3} className="ml-auto shrink-0" forMainRadio />}
-                  </div>
-                );
-              })}
-            </div>
-          </Stack>
-        </Container>
-
-        {/* Recently Played */}
-        <Container>
-          <Stack gap={3}>
-            <div>
-              <p className="h3-sm text-gold mb-4">RECENTLY PLAYED</p>
-              <h2 className="h2-md text-white">On Bhakti+ Radio</h2>
-            </div>
-            <div className="grid grid-cols-2 tablet:grid-cols-3 desktop:grid-cols-6 gap-8">
-              {schedule.slice(0, 6).reverse().map((slot, i) => {
-                const isNow = i === 0;
-                return (
-                  <div
-                    key={`recent-${slot.time}-${i}`}
-                    className={`rounded-lg p-12 transition-colors ${
-                      isNow ? 'bg-brand-light/60 ring-1 ring-gold/20' : 'bg-brand-light/20'
-                    }`}
-                  >
-                    <div className="flex items-center gap-6 mb-6">
-                      {isNow && <span className="w-6 h-6 rounded-full bg-gold animate-pulse shrink-0" />}
-                      <span className="text-10 text-grey-dark font-figtree">
-                        {isNow ? 'Now' : slot.time}
-                      </span>
-                      <span className={`text-8 font-700 uppercase px-6 py-1 rounded-full ml-auto ${SLOT_TYPE_COLORS[slot.type]}`}>
-                        {SLOT_TYPE_LABELS[slot.type]}
-                      </span>
-                    </div>
-                    <p className={`text-12 font-500 truncate ${isNow ? 'text-white' : 'text-grey-light'}`}>
-                      {slot.title}
-                    </p>
                   </div>
                 );
               })}
@@ -1041,147 +1217,13 @@ export function RadioHomepage() {
         </Container>
       </Stack>
 
-      {/* Fixed Bottom Player Bar — NRJ style */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-brand/95 backdrop-blur-md border-t border-brand-light/30">
-        <div className="flex items-center justify-between px-12 tablet:px-24 py-8 max-w-[1536px] mx-auto gap-12">
-          {/* Left: Album art + track info */}
-          <div className="flex items-center gap-12 min-w-0 flex-1">
-            <div className="w-48 h-48 rounded-md bg-brand-light shrink-0 overflow-hidden flex items-center justify-center">
-              {player.source?.type === 'show' && player.source.image ? (
-                <img
-                  src={SHOW_IMAGES[player.source.image] || ''}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              ) : player.source?.type === 'station' ? (
-                <img
-                  src={RADIO_STATIONS.find(s => s.id === player.source?.image)?.icon || iconMainRadio}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <svg className="w-24 h-24 text-gold opacity-60" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
-                </svg>
-              )}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="body-b4 font-600 text-white truncate">
-                {player.source ? player.source.title : (currentSlot?.title || 'Bhakti+ Radio')}
-              </p>
-              <p className="body-b5 text-grey-dark opacity-60 truncate">
-                {player.source
-                  ? player.source.subtitle
-                  : `Bhakti+ Radio — ${timezoneData.flag} ${timezoneData.label}`
-                }
-              </p>
-              {player.source ? (
-                <div className="mt-2 flex items-center gap-8">
-                  <span className={`text-10 font-700 uppercase px-8 py-2 rounded-full hidden tablet:inline-block ${player.source.badgeColor || 'bg-gold/20 text-gold'}`}>
-                    {player.source.badge}
-                  </span>
-                  <button
-                    className="text-10 font-600 text-gold hover:text-gold-light transition-colors"
-                    onClick={player.backToRadio}
-                  >
-                    ← Live Radio
-                  </button>
-                </div>
-              ) : currentSlot ? (
-                <div className="mt-2 hidden tablet:block">
-                  <ContextualCTAButton cta={SLOT_TYPE_CTAS[currentSlot.type]} />
-                </div>
-              ) : null}
-            </div>
-          </div>
-
-          {/* Center: Play/Pause button + wave (desktop) */}
-          <div className="flex items-center gap-16 shrink-0">
-            <button
-              className="w-36 h-36 rounded-full bg-gold flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-200"
-              aria-label={player.isPlaying ? 'Pause' : 'Play'}
-              onClick={player.togglePlay}
-            >
-              {player.isPlaying ? (
-                <svg className="w-14 h-14 text-brand" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-                </svg>
-              ) : (
-                <svg className="w-14 h-14 text-brand ml-1" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              )}
-            </button>
-            <div className="hidden tablet:flex items-center">
-              <AudioWaveBars count={16} />
-            </div>
-          </div>
-
-          {/* Right: Controls (desktop) */}
-          <div className="hidden tablet:flex items-center gap-4 shrink-0 flex-1 justify-end">
-            {/* Volume */}
-            <div className="relative flex items-center">
-              <button
-                className={`p-4 transition-colors ${player.isMuted ? 'text-red' : 'text-grey-dark hover:text-white'}`}
-                aria-label={player.isMuted ? 'Unmute' : 'Mute'}
-                onClick={player.toggleMute}
-              >
-                {player.isMuted ? (
-                  <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                    <line x1="23" y1="9" x2="17" y2="15" />
-                    <line x1="17" y1="9" x2="23" y2="15" />
-                  </svg>
-                ) : (
-                  <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
-                  </svg>
-                )}
-              </button>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={player.isMuted ? 0 : player.volume}
-                onChange={(e) => player.setVolume(Number(e.target.value))}
-                className="w-[80px] h-4 appearance-none bg-brand-light rounded-full cursor-pointer accent-gold"
-                aria-label="Volume"
-              />
-            </div>
-
-            {/* Save current track */}
-            <SaveButton
-              itemId={`track:${currentSlot?.title || 'bhakti-radio'}`}
-              type="track"
-              title={currentSlot?.title || 'Bhakti+ Radio'}
-              description={`Bhakti+ Radio — ${timezoneData.label}`}
-            />
-
-            {/* Share */}
-            <button
-              className="text-grey-dark hover:text-white transition-colors p-4"
-              aria-label="Share"
-              onClick={player.share}
-            >
-              <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="18" cy="5" r="3" />
-                <circle cx="6" cy="12" r="3" />
-                <circle cx="18" cy="19" r="3" />
-                <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98" />
-              </svg>
-            </button>
-
-            {/* More stations */}
-            <button
-              className="btn btn--sm btn--ghost text-12"
-              onClick={() => document.getElementById('radio-stations')?.scrollIntoView({behavior: 'smooth'})}
-            >
-              Stations
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* Fixed Bottom Player Bar */}
+      <BottomPlayerBar
+        player={player}
+        currentSlot={currentSlot}
+        timezoneData={timezoneData}
+        schedule={schedule}
+      />
     </div>
   );
 }
